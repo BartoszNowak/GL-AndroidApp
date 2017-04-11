@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/layout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <CheckBox
+            android:id="@+id/obrazek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/obrazek"
+            android:text="Produkt"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/opis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text"
+            android:layout_toEndOf="@id/obrazek"
+            android:layout_toStartOf="@+id/price_container"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Opis"/>
+
+
+        <LinearLayout
+            android:id="@id/price_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/cena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2,00 $"
+                android:textSize="25sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(4 x 0,50 $)"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
