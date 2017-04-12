@@ -12,26 +12,6 @@ import io.realm.RealmResults;
 
 public class DatabaseController
 {
-    public static void addProductToDatabase(final String name, final float price)
-    {
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    Product product = realm.createObject(Product.class);
-                    product.setName(name);
-                    product.setPrice(price);
-                }
-            });
-        } finally {
-            if(realm != null) {
-                realm.close();
-            }
-        }
-    }
-
     static void addCatalog(final String name)
     {
         Realm realm = Realm.getDefaultInstance();
@@ -46,12 +26,52 @@ public class DatabaseController
     static List<ListCatalog> getAllCatalogs()
     {
         Realm realm = Realm.getDefaultInstance();
-        //RealmResults<ListCatalog> catalogs = realm.where(ListCatalog.class).findAll();
         return realm.where(ListCatalog.class).findAll();
     }
 
     static ListCatalog getCatalogById(final long id)
     {
         return null;
+    }
+
+    static void deleteCatalog(final int index)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<ListCatalog> ideaQueryResults = realm.where(ListCatalog.class).findAll();
+        realm.beginTransaction();
+        ListCatalog catalog = ideaQueryResults.get(index);
+        catalog.deleteFromRealm();
+        realm.commitTransaction();
+    }
+
+    static void updateCatalogName(final int index, final String name)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<ListCatalog> ideaQueryResults = realm.where(ListCatalog.class).findAll();
+        realm.beginTransaction();
+        ListCatalog catalog = ideaQueryResults.get(index);
+        catalog.setName(name);
+        realm.commitTransaction();
+    }
+
+    static void deleteAllCatalogs()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.commitTransaction();
+    }
+
+    static int getNextKey()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        try
+        {
+            return realm.where(ListCatalog.class).max("id").intValue() + 1;
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            return 0;
+        }
     }
 }

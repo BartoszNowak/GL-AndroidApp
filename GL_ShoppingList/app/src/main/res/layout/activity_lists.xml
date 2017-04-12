@@ -28,6 +28,14 @@
             android:src="@drawable/ic_add_24dp"
             fab:fab_label="Dodaj Listę"/>
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            android:src="@drawable/ic_add_24dp"
+            fab:fab_label="Usun 1 element"/>
+
     </com.github.clans.fab.FloatingActionMenu>
 
 </FrameLayout>
