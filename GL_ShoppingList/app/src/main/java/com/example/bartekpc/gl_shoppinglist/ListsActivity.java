@@ -1,6 +1,7 @@
 package com.example.bartekpc.gl_shoppinglist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,8 +31,7 @@ public class ListsActivity extends AppCompatActivity
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        final List<ListCatalog> list = getAllCatalogs();
-        //final ListAdapter
+        final List<Catalog> list = getAllCatalogs();
         adapter = new ListAdapter(list, this);
         recyclerView.setAdapter(adapter);
 
@@ -54,7 +54,7 @@ public class ListsActivity extends AppCompatActivity
             @Override
             public void onClick(final View v)
             {
-                //DatabaseController.deleteAllCatalogs();
+                DatabaseController.deleteAllCatalogs();
                 adapter.notifyDataSetChanged();
                 menu.close(true);
             }
@@ -74,7 +74,10 @@ public class ListsActivity extends AppCompatActivity
             @Override
             public void onClick(final DialogInterface dialog, final int which)
             {
-                emptyVoid(input.getText().toString());
+                DatabaseController.addCatalog(input.getText().toString());
+                final Intent intent = new Intent(getApplicationContext(), ProductListActivity.class);
+                intent.putExtra("EXTRA_CATALOG_NUMBER", DatabaseController.numberOfCatalogs() - 1);
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -99,7 +102,8 @@ public class ListsActivity extends AppCompatActivity
             @Override
             public void onClick(final DialogInterface dialog, final int which)
             {
-                updateCatalogName(index, input.getText().toString());
+                DatabaseController.updateCatalogName(index, input.getText().toString());
+                adapter.notifyDataSetChanged();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -111,20 +115,10 @@ public class ListsActivity extends AppCompatActivity
         builder.show();
     }
 
-    private void emptyVoid(String s)
-    {
-        DatabaseController.addCatalog(s);
-    }
-
     public void removeFromRealm(final int index)
     {
         DatabaseController.deleteCatalog(index);
-        adapter.notifyDataSetChanged();
-    }
-
-    public void updateCatalogName(final int index, final String name)
-    {
-        DatabaseController.updateCatalogName(index, name);
+        DatabaseController.deleteAllProductsFromCatalog(index);
         adapter.notifyDataSetChanged();
     }
 }

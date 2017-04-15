@@ -8,19 +8,13 @@ import io.realm.annotations.PrimaryKey;
  * Created by BartekPC on 4/8/2017.
  */
 
-public class ListCatalog extends RealmObject
+public class Catalog extends RealmObject
 {
     @PrimaryKey
     private long id;
     private String name;
-    private RealmList<Product> products;
 
-    public ListCatalog(final String name)
-    {
-        this.name = name;
-    }
-
-    public ListCatalog()
+    public Catalog()
     {
     }
 

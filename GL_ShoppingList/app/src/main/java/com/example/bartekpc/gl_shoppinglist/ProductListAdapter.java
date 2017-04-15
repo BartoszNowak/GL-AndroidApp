@@ -13,11 +13,11 @@ import java.util.List;
  */
 
 public class ProductListAdapter extends RecyclerView.Adapter{
-    private final List<String> list;
+    private final List<Product> productList;
 
-    public ProductListAdapter(final List<String> list)
+    public ProductListAdapter(final List<Product> list)
     {
-        this.list = list;
+        this.productList = list;
     }
 
     @Override
@@ -30,26 +30,31 @@ public class ProductListAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
-        ((ViewHolder) holder).bindView(list.get(position));
+        ((ViewHolder) holder).bindView(productList.get(position));
     }
 
     @Override
     public int getItemCount()
     {
-        return list.size();
+        return productList.size();
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder{
-        final TextView textView;
+    private static class ViewHolder extends RecyclerView.ViewHolder
+    {
+        final TextView textView_productName;
+        final TextView textView_productDescription;
+
         ViewHolder(final View itemView)
         {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.text);
+            textView_productName = (TextView) itemView.findViewById(R.id.text);
+            textView_productDescription = (TextView) itemView.findViewById(R.id.opis);
         }
 
-        void bindView(String text){
-            textView.setText(text);
+        void bindView(Product product)
+        {
+            textView_productName.setText(product.getName());
+            textView_productDescription.setText(String.valueOf(product.getCatalogId()));
         }
     }
 }
-

@@ -13,6 +13,7 @@ public class Product extends RealmObject
     private long id;
     private String name;
     private float price;
+    private long catalogId;
 
     public Product(final String name, final float price)
     {
@@ -22,6 +23,26 @@ public class Product extends RealmObject
 
     public Product()
     {
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(final long id)
+    {
+        this.id = id;
+    }
+
+    public long getCatalogId()
+    {
+        return catalogId;
+    }
+
+    public void setCatalogId(final long catalogId)
+    {
+        this.catalogId = catalogId;
     }
 
     public String getName()

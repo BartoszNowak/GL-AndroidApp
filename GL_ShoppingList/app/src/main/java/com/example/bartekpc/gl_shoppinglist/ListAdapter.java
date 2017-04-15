@@ -1,6 +1,7 @@
 package com.example.bartekpc.gl_shoppinglist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,12 +20,12 @@ import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter
 {
-    private final List<ListCatalog> list;
+    private final List<Catalog> catalogList;
     private final Context context;
 
-    public ListAdapter(final List<ListCatalog> list, final Context context)
+    public ListAdapter(final List<Catalog> catalogList, final Context context)
     {
-        this.list = list;
+        this.catalogList = catalogList;
         this.context = context;
     }
 
@@ -38,7 +39,7 @@ public class ListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
-        ((ViewHolder) holder).bindView(list.get(position));
+        ((ViewHolder) holder).bindView(catalogList.get(holder.getAdapterPosition()));
         ((ViewHolder) holder).buttonViewOption.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -51,10 +52,10 @@ public class ListAdapter extends RecyclerView.Adapter
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
-                                ((ListsActivity)context).buildUpdateListNameDialog(position);
+                                ((ListsActivity)context).buildUpdateListNameDialog(holder.getAdapterPosition());
                                 break;
                             case R.id.menu2:
-                                ((ListsActivity)context).removeFromRealm(position);
+                                ((ListsActivity)context).removeFromRealm(holder.getAdapterPosition());
                                 break;
                         }
                         return false;
@@ -68,23 +69,36 @@ public class ListAdapter extends RecyclerView.Adapter
     @Override
     public int getItemCount()
     {
-        return list.size();
+        return catalogList.size();
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder
+    private static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         final TextView catalogName;
         final TextView buttonViewOption;
+        private final Context context;
+
         ViewHolder(final View itemView)
         {
             super(itemView);
             catalogName = (TextView) itemView.findViewById(R.id.text);
             buttonViewOption = (TextView) itemView.findViewById(R.id.textViewOptions);
+            itemView.setOnClickListener(this);
+            context = itemView.getContext();
+
         }
 
-        void bindView(ListCatalog text)
+        void bindView(Catalog text)
         {
             catalogName.setText(text.getName());
+        }
+
+        @Override
+        public void onClick(final View v)
+        {
+            final Intent intent = new Intent(context.getApplicationContext(), ProductListActivity.class);
+            intent.putExtra("EXTRA_CATALOG_NUMBER", getAdapterPosition());
+            context.startActivity(intent);
         }
     }
 }
