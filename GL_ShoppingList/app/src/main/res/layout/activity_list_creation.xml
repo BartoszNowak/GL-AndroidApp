@@ -6,15 +6,6 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal"
-        android:text="Nazwij liste:"
-        android:textStyle="bold"
-        android:textSize="18sp"/>
-
     <EditText
         android:id="@+id/editText_listName"
         android:layout_width="match_parent"
@@ -22,7 +13,7 @@
         android:layout_marginTop="10dp"
         android:maxLines="1"
         android:imeOptions="actionDone"
-        android:hint="nazwa"
+        android:hint="Nazwa"
         android:inputType="textCapWords"/>
 
 </LinearLayout>

@@ -13,7 +13,6 @@ import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionMenu;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +21,7 @@ import java.util.List;
 
 public class ProductListActivity extends AppCompatActivity
 {
+    ProductListAdapter adapter;
     int catalogIndex;
 
     @Override
@@ -37,9 +37,9 @@ public class ProductListActivity extends AppCompatActivity
         Bundle extras = getIntent().getExtras();
         catalogIndex = extras.getInt("EXTRA_CATALOG_NUMBER");
 
-        final List<Product> productList = DatabaseController.getAllProductsInCatalog(catalogIndex);
+        final List<Product> productList = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId());
         setTitle(DatabaseController.getCatalog(catalogIndex).getName());
-        final ProductListAdapter adapter = new ProductListAdapter(productList);
+        adapter = new ProductListAdapter(productList, this);
         recyclerView.setAdapter(adapter);
 
         final FloatingActionMenu menu = (FloatingActionMenu) findViewById(R.id.menu);
@@ -51,13 +51,13 @@ public class ProductListActivity extends AppCompatActivity
             @Override
             public void onClick(final View v)
             {
-                buildAddListDialog();
+                buildAddProductDialog();
                 menu.close(true);
             }
         });
     }
 
-    private void buildAddListDialog()
+    private void buildAddProductDialog()
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(ProductListActivity.this);
         builder.setTitle("Dodaj produkt");
@@ -71,7 +71,25 @@ public class ProductListActivity extends AppCompatActivity
             @Override
             public void onClick(final DialogInterface dialog, final int which)
             {
-                addProductToRealm(nameInput.getText().toString(), Float.parseFloat(priceInput.getText().toString()));
+                String nameInputText = nameInput.getText().toString();
+                if(nameInputText.matches(""))
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
+                    alertDialog.setTitle("Błąd");
+                    alertDialog.setMessage("Nie podano nazwy produktu.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else
+                {
+                    Product product = new Product(nameInput.getText().toString(), Float.parseFloat(priceInput.getText().toString()));
+                    DatabaseController.addProduct(product, DatabaseController.getCatalog(catalogIndex).getId());
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -83,9 +101,39 @@ public class ProductListActivity extends AppCompatActivity
         builder.show();
     }
 
-    void addProductToRealm(final String name, final float price)
+    public void buildUpdateProductDialog(final int index)
     {
-        Product product = new Product(name, price);
-        DatabaseController.addProduct(product, catalogIndex);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ProductListActivity.this);
+        builder.setTitle("Edytuj produkt");
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View dialogView = layoutInflater.inflate(R.layout.activity_product_creation, null);
+        final EditText nameInput = (EditText) dialogView.findViewById(R.id.editText_productName);
+        final EditText priceInput = (EditText) dialogView.findViewById(R.id.editText_productPrice);
+        builder.setView(dialogView);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which)
+            {
+                Product product = new Product(nameInput.getText().toString(), Float.parseFloat(priceInput.getText().toString()));
+                DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    void deleteProduct(final int index)
+    {
+        DatabaseController.deleteProduct(index, DatabaseController.getCatalog(catalogIndex).getId());
+        adapter.notifyDataSetChanged();
     }
 }

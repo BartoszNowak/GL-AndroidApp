@@ -55,7 +55,8 @@ public class ListAdapter extends RecyclerView.Adapter
                                 ((ListsActivity)context).buildUpdateListNameDialog(holder.getAdapterPosition());
                                 break;
                             case R.id.menu2:
-                                ((ListsActivity)context).removeFromRealm(holder.getAdapterPosition());
+                                //((ListsActivity)context).removeCatalog(holder.getAdapterPosition());
+                                ((ListsActivity)context).buildDeleteWarningDialog(holder.getAdapterPosition());
                                 break;
                         }
                         return false;
@@ -75,6 +76,7 @@ public class ListAdapter extends RecyclerView.Adapter
     private static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         final TextView catalogName;
+        final TextView productsAmount;
         final TextView buttonViewOption;
         private final Context context;
 
@@ -82,15 +84,24 @@ public class ListAdapter extends RecyclerView.Adapter
         {
             super(itemView);
             catalogName = (TextView) itemView.findViewById(R.id.text);
+            productsAmount = (TextView) itemView.findViewById(R.id.textView_amount);
             buttonViewOption = (TextView) itemView.findViewById(R.id.textViewOptions);
             itemView.setOnClickListener(this);
             context = itemView.getContext();
 
         }
 
-        void bindView(Catalog text)
+        void bindView(Catalog catalog)
         {
-            catalogName.setText(text.getName());
+            catalogName.setText(catalog.getName());
+            int numberOfProductsInCatalog = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition()).getId()).size();
+            int purchasedProducts = 0;
+            StringBuilder builder = new StringBuilder();
+            String productsAmountTest = String.valueOf(builder
+                    .append(String.valueOf(purchasedProducts))
+                    .append("/")
+                    .append(String.valueOf(numberOfProductsInCatalog)));
+            productsAmount.setText(productsAmountTest);
         }
 
         @Override

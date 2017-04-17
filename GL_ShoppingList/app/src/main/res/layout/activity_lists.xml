@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             fab:fab_size="mini"
             android:src="@drawable/ic_add_24dp"
-            fab:fab_label="Usun wszystkie listy"/>
+            fab:fab_label="Usuń wszystkie listy"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

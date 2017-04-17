@@ -13,12 +13,16 @@ public class Product extends RealmObject
     private long id;
     private String name;
     private float price;
+    private int amount;
+    private boolean isPurchased;
+    private boolean isFavourite;
     private long catalogId;
 
     public Product(final String name, final float price)
     {
         this.name = name;
         this.price = price;
+        amount = 1;
     }
 
     public Product()
@@ -65,12 +69,33 @@ public class Product extends RealmObject
         this.price = price;
     }
 
-    @Override
-    public String toString()
+    public int getAmount()
     {
-        return "Product{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                '}';
+        return amount;
+    }
+
+    public void setAmount(final int amount)
+    {
+        this.amount = amount;
+    }
+
+    public boolean isPurchased()
+    {
+        return isPurchased;
+    }
+
+    public void setPurchased(final boolean purchased)
+    {
+        isPurchased = purchased;
+    }
+
+    public boolean isFavourite()
+    {
+        return isFavourite;
+    }
+
+    public void setFavourite(final boolean favourite)
+    {
+        isFavourite = favourite;
     }
 }

@@ -51,9 +51,11 @@ public class DatabaseController
     static void deleteAllCatalogs()
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Catalog> results = realm.where(Catalog.class).findAll();
+        RealmResults<Catalog> catalogRealmResults = realm.where(Catalog.class).findAll();
+        RealmResults<Product> productRealmResults = realm.where(Product.class).findAll();
         realm.beginTransaction();
-        results.deleteAllFromRealm();
+        catalogRealmResults.deleteAllFromRealm();
+        productRealmResults.deleteAllFromRealm();
         realm.commitTransaction();
     }
 
@@ -91,12 +93,12 @@ public class DatabaseController
         return 0;
     }
 
-    static void addProduct(final Product product, final int catalogIndex)
+    static void addProduct(final Product product, final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         product.setId(getNextProductKey());
-        product.setCatalogId(catalogIndex);
+        product.setCatalogId(catalogId);
         realm.copyToRealm(product);
         realm.commitTransaction();
     }
@@ -107,10 +109,10 @@ public class DatabaseController
         return realm.where(Product.class).findAll();
     }
 
-    static List<Product> getAllProductsInCatalog(final int catalogIndex)
+    static List<Product> getAllProductsInCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("catalogId", catalogIndex).findAll();
+        return realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
     }
 
     static void deleteProductFromCatalog(final int index, final int catalogIndex)
@@ -123,12 +125,33 @@ public class DatabaseController
         realm.commitTransaction();
     }
 
-    static void deleteAllProductsFromCatalog(final int catalogIndex)
+    static void deleteAllProductsFromCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogIndex).findAll();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
         realm.beginTransaction();
         results.deleteAllFromRealm();
+        realm.commitTransaction();
+    }
+
+    static void updateProduct(final int index, final long catalogId, final Product updatedProduct)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        realm.beginTransaction();
+        Product product = results.get(index);
+        product.setName(updatedProduct.getName());
+        product.setPrice(updatedProduct.getPrice());
+        realm.commitTransaction();
+    }
+
+    static void deleteProduct(final int index, final long catalogId)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        realm.beginTransaction();
+        Product product = results.get(index);
+        product.deleteFromRealm();
         realm.commitTransaction();
     }
 }

@@ -10,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static com.example.bartekpc.gl_shoppinglist.DatabaseController.getAllCatalogs;
 
@@ -74,7 +76,20 @@ public class ListsActivity extends AppCompatActivity
             @Override
             public void onClick(final DialogInterface dialog, final int which)
             {
-                DatabaseController.addCatalog(input.getText().toString());
+                String userInput = input.getText().toString();
+                if(userInput.matches(""))
+                {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String catalogName = String.valueOf(stringBuilder
+                            .append("Lista ")
+                            .append(DatabaseController.numberOfCatalogs()));
+                    DatabaseController.addCatalog(catalogName);
+                }
+                else
+                {
+                    DatabaseController.addCatalog(userInput);
+                }
+                adapter.notifyDataSetChanged();
                 final Intent intent = new Intent(getApplicationContext(), ProductListActivity.class);
                 intent.putExtra("EXTRA_CATALOG_NUMBER", DatabaseController.numberOfCatalogs() - 1);
                 startActivity(intent);
@@ -106,16 +121,53 @@ public class ListsActivity extends AppCompatActivity
                 adapter.notifyDataSetChanged();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.cancel();
             }
         });
         builder.show();
     }
 
-    public void removeFromRealm(final int index)
+    public void buildDeleteWarningDialog(final int index)
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ListsActivity.this);
+        builder.setTitle("Usun listę");
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View dialogView = layoutInflater.inflate(R.layout.dialog_warning_message, null);
+        builder.setView(dialogView);
+        TextView message = (TextView) dialogView.findViewById(R.id.textView_warningMessage);
+        StringBuilder stringBuilder = new StringBuilder();
+        String warningMessageText = String.valueOf(stringBuilder
+                .append("Jestes pewien, że chcesz usunąc liste \"")
+                .append(DatabaseController.getCatalog(index).getName())
+                .append("\"?"));
+        message.setText(warningMessageText);
+        builder.setPositiveButton("TAK", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which)
+            {
+                DatabaseController.deleteCatalog(index);
+                DatabaseController.deleteAllProductsFromCatalog(index);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton("NIE", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    public void removeCatalog(final int index)
     {
         DatabaseController.deleteCatalog(index);
         DatabaseController.deleteAllProductsFromCatalog(index);
