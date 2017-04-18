@@ -55,7 +55,6 @@ public class ListAdapter extends RecyclerView.Adapter
                                 ((ListsActivity)context).buildUpdateListNameDialog(holder.getAdapterPosition());
                                 break;
                             case R.id.menu2:
-                                //((ListsActivity)context).removeCatalog(holder.getAdapterPosition());
                                 ((ListsActivity)context).buildDeleteWarningDialog(holder.getAdapterPosition());
                                 break;
                         }
@@ -95,7 +94,7 @@ public class ListAdapter extends RecyclerView.Adapter
         {
             catalogName.setText(catalog.getName());
             int numberOfProductsInCatalog = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition()).getId()).size();
-            int purchasedProducts = 0;
+            int purchasedProducts = DatabaseController.getAllPurchasedProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition()).getId()).size();
             StringBuilder builder = new StringBuilder();
             String productsAmountTest = String.valueOf(builder
                     .append(String.valueOf(purchasedProducts))

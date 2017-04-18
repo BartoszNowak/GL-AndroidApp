@@ -115,14 +115,16 @@ public class DatabaseController
         return realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
     }
 
-    static void deleteProductFromCatalog(final int index, final int catalogIndex)
+    static List<Product> getAllPurchasedProductsInCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogIndex).findAll();
-        realm.beginTransaction();
-        Product product = results.get(index);
-        product.deleteFromRealm();
-        realm.commitTransaction();
+        return realm.where(Product.class).equalTo("catalogId", catalogId).equalTo("isPurchased", true).findAll();
+    }
+
+    static List<Product> getAllFavouriteProductsInCatalog(final long catalogId)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Product.class).equalTo("catalogId", catalogId).equalTo("isFavourite", true).findAll();
     }
 
     static void deleteAllProductsFromCatalog(final long catalogId)
@@ -142,6 +144,26 @@ public class DatabaseController
         Product product = results.get(index);
         product.setName(updatedProduct.getName());
         product.setPrice(updatedProduct.getPrice());
+        realm.commitTransaction();
+    }
+
+    static void setProductFavourite(final int index, final long catalogId, final boolean favourite)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        realm.beginTransaction();
+        Product product = results.get(index);
+        product.setFavourite(favourite);
+        realm.commitTransaction();
+    }
+
+    static void setProductPurchased(final int index, final long catalogId, final boolean purchased)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        realm.beginTransaction();
+        Product product = results.get(index);
+        product.setPurchased(purchased);
         realm.commitTransaction();
     }
 

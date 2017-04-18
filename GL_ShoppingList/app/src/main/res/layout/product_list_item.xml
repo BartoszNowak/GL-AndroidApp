@@ -14,7 +14,7 @@
         android:paddingRight="8dp">
 
         <CheckBox
-            android:id="@+id/obrazek"
+            android:id="@+id/checkbox_purchase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -25,7 +25,7 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/obrazek"
+            android:layout_toEndOf="@id/checkbox_purchase"
             android:text="Produkt"
             android:textSize="20sp"/>
 
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text"
-            android:layout_toEndOf="@id/obrazek"
+            android:layout_toEndOf="@id/checkbox_purchase"
             android:layout_toStartOf="@+id/price_container"
             android:ellipsize="end"
             android:maxLines="1"

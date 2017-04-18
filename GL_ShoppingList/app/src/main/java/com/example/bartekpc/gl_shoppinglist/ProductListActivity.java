@@ -1,5 +1,6 @@
 package com.example.bartekpc.gl_shoppinglist;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -72,6 +75,7 @@ public class ProductListActivity extends AppCompatActivity
             public void onClick(final DialogInterface dialog, final int which)
             {
                 String nameInputText = nameInput.getText().toString();
+                String priceInputText = priceInput.getText().toString();
                 if(nameInputText.matches(""))
                 {
                     AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
@@ -87,7 +91,8 @@ public class ProductListActivity extends AppCompatActivity
                 }
                 else
                 {
-                    Product product = new Product(nameInput.getText().toString(), Float.parseFloat(priceInput.getText().toString()));
+                    if(priceInputText.matches("")) priceInputText = "0";
+                    Product product = new Product(nameInputText, Float.parseFloat(priceInputText));
                     DatabaseController.addProduct(product, DatabaseController.getCatalog(catalogIndex).getId());
                 }
             }
@@ -115,8 +120,36 @@ public class ProductListActivity extends AppCompatActivity
             @Override
             public void onClick(final DialogInterface dialog, final int which)
             {
-                Product product = new Product(nameInput.getText().toString(), Float.parseFloat(priceInput.getText().toString()));
-                DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
+                String nameInputText = nameInput.getText().toString();
+                String priceInputText = priceInput.getText().toString();
+                if(nameInputText.matches(""))
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
+                    alertDialog.setTitle("Błąd");
+                    alertDialog.setMessage("Nie podano nazwy produktu.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else
+                {
+                    float productPrice;
+                    if(priceInputText.matches(""))
+                    {
+                        productPrice =  DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId()).get(index).getPrice();
+                    }
+                    else
+                    {
+                        productPrice = Float.parseFloat(priceInputText);
+                    }
+                    Product product = new Product(nameInputText, productPrice);
+
+                    DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
+                }
                 adapter.notifyDataSetChanged();
             }
         });
@@ -136,4 +169,13 @@ public class ProductListActivity extends AppCompatActivity
         DatabaseController.deleteProduct(index, DatabaseController.getCatalog(catalogIndex).getId());
         adapter.notifyDataSetChanged();
     }
+
+    void setProductPurchased(final int index, final boolean checkBoxValue)
+    {
+        DatabaseController.setProductPurchased(index, DatabaseController.getCatalog(catalogIndex).getId(), checkBoxValue);
+    }
+    void setProductFavourite(final int index, final boolean checkBoxValue)
+    {
+        DatabaseController.setProductFavourite(index, DatabaseController.getCatalog(catalogIndex).getId(), checkBoxValue);
+}
 }

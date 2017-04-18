@@ -1,16 +1,19 @@
 package com.example.bartekpc.gl_shoppinglist;
 
 import android.content.Context;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by BartekPC on 3/29/2017.
@@ -38,13 +41,22 @@ public class ProductListAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
         ((ViewHolder) holder).bindView(productList.get(position));
+        ((ViewHolder) holder).checkBox_purchase.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
+            {
+                ((ProductListActivity)context).setProductPurchased(holder.getAdapterPosition(), isChecked);
+            }
+        });
         ((ProductListAdapter.ViewHolder) holder).buttonViewOption.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View v)
             {
-                PopupMenu popup = new PopupMenu(context, ((ProductListAdapter.ViewHolder) holder).buttonViewOption);
+                final PopupMenu popup = new PopupMenu(context, ((ProductListAdapter.ViewHolder) holder).buttonViewOption);
                 popup.inflate(R.menu.product_options_menu);
+                popup.getMenu().getItem(2).setChecked(productList.get(holder.getAdapterPosition()).isFavourite());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -56,6 +68,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
                                 ((ProductListActivity)context).deleteProduct(holder.getAdapterPosition());
                                 break;
                             case R.id.menu3:
+                                ((ProductListActivity)context).setProductFavourite(holder.getAdapterPosition(), !productList.get(holder.getAdapterPosition()).isFavourite());
                                 break;
                         }
                         return false;
@@ -79,6 +92,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
         final TextView textView_price;
         final TextView textView_priceDetails;
         final TextView buttonViewOption;
+        final CheckBox checkBox_purchase;
 
         ViewHolder(final View itemView)
         {
@@ -88,6 +102,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
             textView_price = (TextView) itemView.findViewById(R.id.textView_price);
             textView_priceDetails = (TextView) itemView.findViewById(R.id.textView_PriceDetails);
             buttonViewOption = (TextView) itemView.findViewById(R.id.textView_options);
+            checkBox_purchase = (CheckBox) itemView.findViewById(R.id.checkbox_purchase);
         }
 
         void bindView(Product product)
@@ -109,6 +124,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
                     .append(" $")
                     .append(")"));
             textView_priceDetails.setText(costDetails);
+            checkBox_purchase.setChecked(product.isPurchased());
         }
     }
 }

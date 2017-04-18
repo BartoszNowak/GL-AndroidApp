@@ -1,5 +1,6 @@
 package com.example.bartekpc.gl_shoppinglist;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -63,6 +64,13 @@ public class ListsActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        adapter.notifyDataSetChanged();
+    }
+
     private void buildAddListDialog()
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(ListsActivity.this);
@@ -82,14 +90,13 @@ public class ListsActivity extends AppCompatActivity
                     StringBuilder stringBuilder = new StringBuilder();
                     String catalogName = String.valueOf(stringBuilder
                             .append("Lista ")
-                            .append(DatabaseController.numberOfCatalogs()));
+                            .append(DatabaseController.numberOfCatalogs() + 1));
                     DatabaseController.addCatalog(catalogName);
                 }
                 else
                 {
                     DatabaseController.addCatalog(userInput);
                 }
-                adapter.notifyDataSetChanged();
                 final Intent intent = new Intent(getApplicationContext(), ProductListActivity.class);
                 intent.putExtra("EXTRA_CATALOG_NUMBER", DatabaseController.numberOfCatalogs() - 1);
                 startActivity(intent);
@@ -135,17 +142,13 @@ public class ListsActivity extends AppCompatActivity
     public void buildDeleteWarningDialog(final int index)
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(ListsActivity.this);
-        builder.setTitle("Usun listę");
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View dialogView = layoutInflater.inflate(R.layout.dialog_warning_message, null);
-        builder.setView(dialogView);
-        TextView message = (TextView) dialogView.findViewById(R.id.textView_warningMessage);
+        builder.setTitle("Usuń listę");
         StringBuilder stringBuilder = new StringBuilder();
         String warningMessageText = String.valueOf(stringBuilder
                 .append("Jestes pewien, że chcesz usunąc liste \"")
                 .append(DatabaseController.getCatalog(index).getName())
                 .append("\"?"));
-        message.setText(warningMessageText);
+        builder.setMessage(warningMessageText);
         builder.setPositiveButton("TAK", new DialogInterface.OnClickListener()
         {
             @Override
