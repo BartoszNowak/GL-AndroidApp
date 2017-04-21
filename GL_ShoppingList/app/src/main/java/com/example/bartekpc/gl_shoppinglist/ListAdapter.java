@@ -10,13 +10,9 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.bartekpc.gl_shoppinglist.model.Catalog;
+
 import java.util.List;
-
-/**
- * Created by BartekPC on 4/6/2017.
- */
-
-
 
 public class ListAdapter extends RecyclerView.Adapter
 {
@@ -39,23 +35,24 @@ public class ListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
+        final Catalog selectedCatalog = catalogList.get(holder.getAdapterPosition());
         ((ViewHolder) holder).bindView(catalogList.get(holder.getAdapterPosition()));
         ((ViewHolder) holder).buttonViewOption.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(final View v)
+            public void onClick(final View view)
             {
                 PopupMenu popup = new PopupMenu(context, ((ViewHolder) holder).buttonViewOption);
                 popup.inflate(R.menu.catalog_options_menu);
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
-                    public boolean onMenuItemClick(MenuItem item) {
+                    public boolean onMenuItemClick(final MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
                                 ((ListsActivity)context).buildUpdateListNameDialog(holder.getAdapterPosition());
                                 break;
                             case R.id.menu2:
-                                ((ListsActivity)context).buildDeleteWarningDialog(holder.getAdapterPosition());
+                                ((ListsActivity)context).buildDeleteWarningDialog(selectedCatalog);
                                 break;
                         }
                         return false;

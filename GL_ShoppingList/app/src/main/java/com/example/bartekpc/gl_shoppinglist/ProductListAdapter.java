@@ -1,7 +1,6 @@
 package com.example.bartekpc.gl_shoppinglist;
 
 import android.content.Context;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,16 +10,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.bartekpc.gl_shoppinglist.model.Product;
 
 import java.util.List;
 
-/**
- * Created by BartekPC on 3/29/2017.
- */
-
 public class ProductListAdapter extends RecyclerView.Adapter
 {
+    private static final int FAVOURITE_CHECKBOX_MENU_OPTION = 2;
+
     private final List<Product> productList;
     private final Context context;
 
@@ -40,23 +38,24 @@ public class ProductListAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
+        final Product selectedProduct = productList.get(holder.getAdapterPosition());
         ((ViewHolder) holder).bindView(productList.get(position));
         ((ViewHolder) holder).checkBox_purchase.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
             {
-                ((ProductListActivity)context).setProductPurchased(holder.getAdapterPosition(), isChecked);
+                DatabaseController.setProductPurchased(selectedProduct, isChecked);
             }
         });
-        ((ProductListAdapter.ViewHolder) holder).buttonViewOption.setOnClickListener(new View.OnClickListener()
+        ((ProductListAdapter.ViewHolder) holder).textView_options.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View v)
             {
-                final PopupMenu popup = new PopupMenu(context, ((ProductListAdapter.ViewHolder) holder).buttonViewOption);
+                final PopupMenu popup = new PopupMenu(context, ((ProductListAdapter.ViewHolder) holder).textView_options);
                 popup.inflate(R.menu.product_options_menu);
-                popup.getMenu().getItem(2).setChecked(productList.get(holder.getAdapterPosition()).isFavourite());
+                popup.getMenu().getItem(FAVOURITE_CHECKBOX_MENU_OPTION).setChecked(selectedProduct.isFavourite());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -65,10 +64,11 @@ public class ProductListAdapter extends RecyclerView.Adapter
                                 ((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
                                 break;
                             case R.id.menu2:
-                                ((ProductListActivity)context).deleteProduct(holder.getAdapterPosition());
+                                DatabaseController.deleteProduct(selectedProduct);
+                                notifyDataSetChanged();
                                 break;
                             case R.id.menu3:
-                                ((ProductListActivity)context).setProductFavourite(holder.getAdapterPosition(), !productList.get(holder.getAdapterPosition()).isFavourite());
+                                DatabaseController.setProductFavourite(selectedProduct, !selectedProduct.isFavourite());
                                 break;
                         }
                         return false;
@@ -91,7 +91,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
         final TextView textView_productDescription;
         final TextView textView_price;
         final TextView textView_priceDetails;
-        final TextView buttonViewOption;
+        final TextView textView_options;
         final CheckBox checkBox_purchase;
 
         ViewHolder(final View itemView)
@@ -101,14 +101,14 @@ public class ProductListAdapter extends RecyclerView.Adapter
             textView_productDescription = (TextView) itemView.findViewById(R.id.opis);
             textView_price = (TextView) itemView.findViewById(R.id.textView_price);
             textView_priceDetails = (TextView) itemView.findViewById(R.id.textView_PriceDetails);
-            buttonViewOption = (TextView) itemView.findViewById(R.id.textView_options);
+            textView_options = (TextView) itemView.findViewById(R.id.textView_options);
             checkBox_purchase = (CheckBox) itemView.findViewById(R.id.checkbox_purchase);
         }
 
         void bindView(Product product)
         {
             textView_productName.setText(product.getName());
-            textView_productDescription.setText(String.valueOf(product.getCatalogId()));
+            textView_productDescription.setText(String.valueOf(product.getId()));
             float totalCost = product.getPrice() * product.getAmount();
             StringBuilder totalCostBuilder = new StringBuilder();
             String totalCostText = String.valueOf(totalCostBuilder

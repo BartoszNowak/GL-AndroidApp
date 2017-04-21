@@ -1,9 +1,14 @@
 package com.example.bartekpc.gl_shoppinglist;
 
+import com.example.bartekpc.gl_shoppinglist.model.AppSettings;
+import com.example.bartekpc.gl_shoppinglist.model.Catalog;
+import com.example.bartekpc.gl_shoppinglist.model.Product;
+
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Created by BartekPC on 4/7/2017.
@@ -28,13 +33,14 @@ public class DatabaseController
         return realm.where(Catalog.class).findAll();
     }
 
-    static void deleteCatalog(final int index)
+    static void deleteCatalog(final Catalog catalog)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Catalog> results = realm.where(Catalog.class).findAll();
+        Catalog result = realm.where(Catalog.class).equalTo("id", catalog.getId()).findFirst();
+        RealmResults<Product> productsIncludedInCatalog = realm.where(Product.class).equalTo("catalogId", catalog.getId()).findAll();
         realm.beginTransaction();
-        Catalog catalog = results.get(index);
-        catalog.deleteFromRealm();
+        result.deleteFromRealm();
+        productsIncludedInCatalog.deleteAllFromRealm();
         realm.commitTransaction();
     }
 
@@ -103,7 +109,7 @@ public class DatabaseController
         realm.commitTransaction();
     }
 
-    private static List<Product> getAllProducts()
+    static List<Product> getAllProducts()
     {
         Realm realm = Realm.getDefaultInstance();
         return realm.where(Product.class).findAll();
@@ -127,10 +133,10 @@ public class DatabaseController
         return realm.where(Product.class).equalTo("catalogId", catalogId).equalTo("isFavourite", true).findAll();
     }
 
-    static void deleteAllProductsFromCatalog(final long catalogId)
+    static void deleteAllProductsFromCatalog(final Catalog catalog)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalog.getId()).findAll();
         realm.beginTransaction();
         results.deleteAllFromRealm();
         realm.commitTransaction();
@@ -147,33 +153,57 @@ public class DatabaseController
         realm.commitTransaction();
     }
 
-    static void setProductFavourite(final int index, final long catalogId, final boolean favourite)
+    static void setProductFavourite(final Product product, final boolean favourite)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
         realm.beginTransaction();
-        Product product = results.get(index);
-        product.setFavourite(favourite);
+        result.setFavourite(favourite);
         realm.commitTransaction();
     }
 
-    static void setProductPurchased(final int index, final long catalogId, final boolean purchased)
+    static void setProductPurchased(final Product product, final boolean purchased)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
         realm.beginTransaction();
-        Product product = results.get(index);
-        product.setPurchased(purchased);
+        result.setPurchased(purchased);
         realm.commitTransaction();
     }
 
-    static void deleteProduct(final int index, final long catalogId)
+    static void deleteProduct(final Product product)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
         realm.beginTransaction();
-        Product product = results.get(index);
-        product.deleteFromRealm();
+        result.deleteFromRealm();
         realm.commitTransaction();
+    }
+
+    static List<Product> getAllProductsInCatalogSorted(final long catalogId, final ProductSortModes sortMode)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Product.class).equalTo("catalogId", catalogId).findAllSorted(sortMode.toString(), Sort.ASCENDING);
+    }
+
+    static Product getProductInCatalog(final long catalogId, final int index)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAllSorted("name", Sort.ASCENDING);
+        return  results.get(index);
+    }
+
+    static void setSortMode(final ProductSortModes sortMode)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        RealmResults<AppSettings> results = realm.where(AppSettings.class).findAll();
+        realm.commitTransaction();
+    }
+
+    static List<Product> getAllFavouriteProducts()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Product.class).equalTo("isFavourite", true).findAll();
     }
 }

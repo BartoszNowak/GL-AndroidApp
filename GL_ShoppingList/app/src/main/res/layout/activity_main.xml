@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.bartekpc.gl_shoppinglist.MainActivity">
+    tools:context="com.example.bartekpc.gl_shoppinglist.ProductAddActivity">
 
     <EditText
         android:id="@+id/editText_name"

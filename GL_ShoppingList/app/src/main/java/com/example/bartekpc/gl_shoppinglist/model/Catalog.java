@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.model;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;

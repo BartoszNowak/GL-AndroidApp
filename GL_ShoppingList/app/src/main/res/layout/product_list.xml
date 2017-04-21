@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.bartekpc.gl_shoppinglist.MainActivity">
+    tools:context="com.example.bartekpc.gl_shoppinglist.ProductAddActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/lista_stringow"
+        android:id="@+id/recyclerView_productList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -21,12 +21,20 @@
         fab:menu_icon="@drawable/fab_add">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/menu_item_0"
+            android:id="@+id/menu_item_addProduct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
             android:src="@drawable/ic_add_24dp"
             fab:fab_label="Dodaj Produkt"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item_Sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            android:src="@drawable/ic_add_24dp"
+            fab:fab_label="Sortowanie"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

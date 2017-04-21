@@ -6,9 +6,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="name_hint">Nazwa</string>
-    <string name="price_hint">Cena</string>
-    <string name="amount_hint">Ilość</string>
-    <string name="favourite">Ulubione</string>
-    <string name="confirm_text_add">DODAJ</string>
+    <string name="name_hint">Name</string>
+    <string name="price_hint">Price</string>
+    <string name="amount_hint">Amount</string>
+    <string name="favourite">Favourite</string>
+    <string name="confirm_text_add">ADD</string>
 </resources>

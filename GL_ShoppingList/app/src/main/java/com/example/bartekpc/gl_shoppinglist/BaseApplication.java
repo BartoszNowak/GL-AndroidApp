@@ -17,7 +17,7 @@ public class BaseApplication extends Application
     {
         super.onCreate();
         Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
+        final RealmConfiguration config = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(config);
     }
 }

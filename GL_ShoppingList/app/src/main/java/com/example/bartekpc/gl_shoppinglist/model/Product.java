@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.model;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -13,7 +13,7 @@ public class Product extends RealmObject
     private long id;
     private String name;
     private float price;
-    private int amount;
+    private float amount;
     private boolean isPurchased;
     private boolean isFavourite;
     private long catalogId;
@@ -23,6 +23,13 @@ public class Product extends RealmObject
         this.name = name;
         this.price = price;
         amount = 1;
+    }
+
+    public Product(final String name, final float price, final float amount)
+    {
+        this.name = name;
+        this.price = price;
+        this.amount = amount;
     }
 
     public Product()
@@ -69,7 +76,7 @@ public class Product extends RealmObject
         this.price = price;
     }
 
-    public int getAmount()
+    public float getAmount()
     {
         return amount;
     }
