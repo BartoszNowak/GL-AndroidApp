@@ -14,18 +14,25 @@ import android.widget.TextView;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ProductListAdapter extends RecyclerView.Adapter
 {
     private static final int FAVOURITE_CHECKBOX_MENU_OPTION = 2;
 
-    private final List<Product> productList;
+    private List<Product> productList;
     private final Context context;
 
     public ProductListAdapter(final List<Product> list, final Context context)
     {
         this.productList = list;
         this.context = context;
+    }
+
+    public void changeList(final List<Product> list)
+    {
+        productList = list;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -46,6 +53,7 @@ public class ProductListAdapter extends RecyclerView.Adapter
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
             {
                 DatabaseController.setProductPurchased(selectedProduct, isChecked);
+                notifyDataSetChanged();
             }
         });
         ((ProductListAdapter.ViewHolder) holder).textView_options.setOnClickListener(new View.OnClickListener()
@@ -110,20 +118,13 @@ public class ProductListAdapter extends RecyclerView.Adapter
             textView_productName.setText(product.getName());
             textView_productDescription.setText(String.valueOf(product.getId()));
             float totalCost = product.getPrice() * product.getAmount();
-            StringBuilder totalCostBuilder = new StringBuilder();
-            String totalCostText = String.valueOf(totalCostBuilder
-                    .append(String.valueOf(totalCost))
-                    .append(" $"));
+            String totalCostText = String.format(Locale.getDefault(), " %s $", DecimalFormatUtils.formatCurrency(totalCost));
             textView_price.setText(totalCostText);
-            StringBuilder costBuilder = new StringBuilder();
-            String costDetails = String.valueOf(costBuilder
-                    .append("(")
-                    .append(String.valueOf(product.getAmount()))
-                    .append(" x ")
-                    .append(String.valueOf(product.getPrice()))
-                    .append(" $")
-                    .append(")"));
+            String amount = DecimalFormatUtils.formatAmount(product.getAmount());
+            String price = DecimalFormatUtils.formatCurrency(product.getPrice());
+            String costDetails = String.format(Locale.getDefault(), "(%s x %s $)", amount, price);
             textView_priceDetails.setText(costDetails);
+            checkBox_purchase.setOnCheckedChangeListener(null);
             checkBox_purchase.setChecked(product.isPurchased());
         }
     }

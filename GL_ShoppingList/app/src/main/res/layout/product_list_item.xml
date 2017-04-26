@@ -26,6 +26,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/checkbox_purchase"
+            android:layout_toStartOf="@+id/price_container"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="Produkt"
             android:textSize="20sp"/>
 
@@ -55,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_toLeftOf="@id/textView_options"
+            android:layout_toStartOf="@id/textView_options"
             android:layout_centerVertical="true">
 
             <TextView
@@ -63,12 +66,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2,00 $"
+                android:layout_gravity="center"
                 android:textSize="25sp"/>
 
             <TextView
                 android:id="@+id/textView_PriceDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="(4 x 0,50 $)"/>
 
         </LinearLayout>

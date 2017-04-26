@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.bartekpc.gl_shoppinglist.model.Catalog;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ListAdapter extends RecyclerView.Adapter
 {
@@ -49,7 +50,7 @@ public class ListAdapter extends RecyclerView.Adapter
                     public boolean onMenuItemClick(final MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
-                                ((ListsActivity)context).buildUpdateListNameDialog(holder.getAdapterPosition());
+                                ((ListsActivity)context).showUpdateListNameDialog(selectedCatalog);
                                 break;
                             case R.id.menu2:
                                 ((ListsActivity)context).buildDeleteWarningDialog(selectedCatalog);
@@ -90,14 +91,10 @@ public class ListAdapter extends RecyclerView.Adapter
         void bindView(Catalog catalog)
         {
             catalogName.setText(catalog.getName());
-            int numberOfProductsInCatalog = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition()).getId()).size();
-            int purchasedProducts = DatabaseController.getAllPurchasedProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition()).getId()).size();
-            StringBuilder builder = new StringBuilder();
-            String productsAmountTest = String.valueOf(builder
-                    .append(String.valueOf(purchasedProducts))
-                    .append("/")
-                    .append(String.valueOf(numberOfProductsInCatalog)));
-            productsAmount.setText(productsAmountTest);
+            int numberOfProducts = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition())).size();
+            int numberOfPurchasedProducts = DatabaseController.getAllPurchasedProductsInCatalog(DatabaseController.getCatalog(getAdapterPosition())).size();
+            String productsNumberText = String.format(Locale.getDefault(), "%1$d/%2$d", numberOfPurchasedProducts, numberOfProducts);
+            productsAmount.setText(productsNumberText);
         }
 
         @Override

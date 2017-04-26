@@ -3,6 +3,8 @@ package com.example.bartekpc.gl_shoppinglist;
 import com.example.bartekpc.gl_shoppinglist.model.AppSettings;
 import com.example.bartekpc.gl_shoppinglist.model.Catalog;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
+import com.example.bartekpc.gl_shoppinglist.model.ProductFilterMode;
+import com.example.bartekpc.gl_shoppinglist.model.ProductSortMode;
 
 import java.util.List;
 
@@ -10,13 +12,14 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-/**
- * Created by BartekPC on 4/7/2017.
- */
-
 public class DatabaseController
 {
-    static void addCatalog(final String name)
+    private static final String ID = "id";
+    private static final String CATALOG_ID = "catalogId";
+    private static final String IS_PURCHASED = "isPurchased";
+    private static final String IS_FAVOURITE = "isFavourite";
+
+    public static void addCatalog(final String name)
     {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -36,21 +39,20 @@ public class DatabaseController
     static void deleteCatalog(final Catalog catalog)
     {
         Realm realm = Realm.getDefaultInstance();
-        Catalog result = realm.where(Catalog.class).equalTo("id", catalog.getId()).findFirst();
-        RealmResults<Product> productsIncludedInCatalog = realm.where(Product.class).equalTo("catalogId", catalog.getId()).findAll();
+        Catalog result = realm.where(Catalog.class).equalTo(ID, catalog.getId()).findFirst();
+        RealmResults<Product> productsIncludedInCatalog = realm.where(Product.class).equalTo(CATALOG_ID, catalog.getId()).findAll();
         realm.beginTransaction();
         result.deleteFromRealm();
         productsIncludedInCatalog.deleteAllFromRealm();
         realm.commitTransaction();
     }
 
-    static void updateCatalogName(final int index, final String name)
+    static void updateCatalogName(final Catalog catalog, final String name)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Catalog> results = realm.where(Catalog.class).findAll();
+        Catalog result = realm.where(Catalog.class).equalTo(ID, catalog.getId()).findFirst();
         realm.beginTransaction();
-        Catalog catalog = results.get(index);
-        catalog.setName(name);
+        result.setName(name);
         realm.commitTransaction();
     }
 
@@ -70,7 +72,7 @@ public class DatabaseController
         Realm realm = Realm.getDefaultInstance();
         if(getAllCatalogs().size() != 0)
         {
-            return (long) (realm.where(Catalog.class).max("id")) + 1;
+            return (long) (realm.where(Catalog.class).max(ID)) + 1;
         }
         return 0;
     }
@@ -82,7 +84,7 @@ public class DatabaseController
         return results.get(index);
     }
 
-    static int numberOfCatalogs()
+    public static int numberOfCatalogs()
     {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Catalog> results = realm.where(Catalog.class).findAll();
@@ -94,7 +96,7 @@ public class DatabaseController
         Realm realm = Realm.getDefaultInstance();
         if(getAllProducts().size() != 0)
         {
-            return (long) (realm.where(Product.class).max("id")) + 1;
+            return (long) (realm.where(Product.class).max(ID)) + 1;
         }
         return 0;
     }
@@ -112,40 +114,37 @@ public class DatabaseController
     static List<Product> getAllProducts()
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).findAll();
+        return realm.where(Product.class).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 
-    static List<Product> getAllProductsInCatalog(final long catalogId)
+    static List<Product> getAllProductsInCatalog(final Catalog catalog)
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalog.getId()).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 
-    static List<Product> getAllPurchasedProductsInCatalog(final long catalogId)
+    /*static List<Product> getAllProductsInCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("catalogId", catalogId).equalTo("isPurchased", true).findAll();
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalogId).findAllSorted(getSortMode(), Sort.ASCENDING);
+    }*/
+
+    static List<Product> getAllPurchasedProductsInCatalog(final Catalog catalog)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalog.getId()).equalTo(IS_PURCHASED, true).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 
-    static List<Product> getAllFavouriteProductsInCatalog(final long catalogId)
+    static List<Product> getAllNotPurchasedProductsInCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("catalogId", catalogId).equalTo("isFavourite", true).findAll();
-    }
-
-    static void deleteAllProductsFromCatalog(final Catalog catalog)
-    {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalog.getId()).findAll();
-        realm.beginTransaction();
-        results.deleteAllFromRealm();
-        realm.commitTransaction();
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalogId).equalTo(IS_PURCHASED, false).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 
     static void updateProduct(final int index, final long catalogId, final Product updatedProduct)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAll();
+        RealmResults<Product> results = realm.where(Product.class).equalTo(CATALOG_ID, catalogId).findAllSorted(getSortMode(), Sort.ASCENDING);
         realm.beginTransaction();
         Product product = results.get(index);
         product.setName(updatedProduct.getName());
@@ -156,7 +155,7 @@ public class DatabaseController
     static void setProductFavourite(final Product product, final boolean favourite)
     {
         Realm realm = Realm.getDefaultInstance();
-        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
+        Product result = realm.where(Product.class).equalTo(ID, product.getId()).findFirst();
         realm.beginTransaction();
         result.setFavourite(favourite);
         realm.commitTransaction();
@@ -165,7 +164,7 @@ public class DatabaseController
     static void setProductPurchased(final Product product, final boolean purchased)
     {
         Realm realm = Realm.getDefaultInstance();
-        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
+        Product result = realm.where(Product.class).equalTo(ID, product.getId()).findFirst();
         realm.beginTransaction();
         result.setPurchased(purchased);
         realm.commitTransaction();
@@ -174,36 +173,127 @@ public class DatabaseController
     static void deleteProduct(final Product product)
     {
         Realm realm = Realm.getDefaultInstance();
-        Product result = realm.where(Product.class).equalTo("id", product.getId()).findFirst();
+        Product result = realm.where(Product.class).equalTo(ID, product.getId()).findFirst();
         realm.beginTransaction();
         result.deleteFromRealm();
         realm.commitTransaction();
     }
 
-    static List<Product> getAllProductsInCatalogSorted(final long catalogId, final ProductSortModes sortMode)
+    static List<Product> getAllProductsInCatalog(final long catalogId)
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("catalogId", catalogId).findAllSorted(sortMode.toString(), Sort.ASCENDING);
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalogId).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 
-    static Product getProductInCatalog(final long catalogId, final int index)
+    /*static List<Product> getAllProductsInCatalog(final Catalog catalog)
     {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Product> results = realm.where(Product.class).equalTo("catalogId", catalogId).findAllSorted("name", Sort.ASCENDING);
+        return realm.where(Product.class).equalTo(CATALOG_ID, catalog.getId()).findAllSorted(getSortMode(), Sort.ASCENDING);
+    }*/
+
+    /*static Product getProductInCatalog(final long catalogId, final int index)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Product> results = realm.where(Product.class).equalTo(CATALOG_ID, catalogId).findAllSorted(getSortMode(), Sort.ASCENDING);
         return  results.get(index);
-    }
+    }*/
 
-    static void setSortMode(final ProductSortModes sortMode)
+    static void setSortMode(final ProductSortMode sortMode)
     {
         Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = realm.where(AppSettings.class).findFirst();
         realm.beginTransaction();
-        RealmResults<AppSettings> results = realm.where(AppSettings.class).findAll();
+        appSettings.setSortMode(sortMode);
         realm.commitTransaction();
+    }
+
+    private static String getSortMode()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = realm.where(AppSettings.class).findFirst();
+        if(appSettings == null)
+        {
+            setUpDefaultAppSettings();
+        }
+        else
+        {
+            return appSettings.getSortMode();
+        }
+        return null;
+    }
+
+    static int getSortModeIndex()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = realm.where(AppSettings.class).findFirst();
+        if(appSettings == null)
+        {
+            setUpDefaultAppSettings();
+        }
+        else
+        {
+            return appSettings.getSortModeIndex();
+        }
+        return -1;
+    }
+
+    static void setFilterMode(final ProductFilterMode filterMode)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = realm.where(AppSettings.class).findFirst();
+        realm.beginTransaction();
+        appSettings.setFilterMode(filterMode);
+        realm.commitTransaction();
+    }
+
+    static int getFilterModeIndex()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = realm.where(AppSettings.class).findFirst();
+        if(appSettings == null)
+        {
+            setUpDefaultAppSettings();
+        }
+        else
+        {
+            return appSettings.getFilterModeIndex();
+        }
+        return -1;
+    }
+
+    private static void setUpDefaultAppSettings()
+    {
+        Realm realm = Realm.getDefaultInstance();
+        AppSettings appSettings = new AppSettings(ProductSortMode.SORT_DEFAULT, ProductFilterMode.FILTER_ALL);
+        realm.beginTransaction();
+        realm.copyToRealm(appSettings);
+        realm.commitTransaction();
+    }
+
+    static List<Product> getAllProductsInCatalogFiltered(final long catalogId)
+    {
+        Realm realm = Realm.getDefaultInstance();
+
+        switch(getFilterModeIndex())
+        {
+            case 0:
+            {
+                return realm.where(Product.class).equalTo(CATALOG_ID, catalogId).findAllSorted(getSortMode(), Sort.ASCENDING);
+            }
+            case 1:
+            {
+                return realm.where(Product.class).equalTo(CATALOG_ID, catalogId).equalTo(IS_PURCHASED, false).findAllSorted(getSortMode(), Sort.ASCENDING);
+            }
+            default:
+            {
+                return null;
+            }
+        }
     }
 
     static List<Product> getAllFavouriteProducts()
     {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Product.class).equalTo("isFavourite", true).findAll();
+        return realm.where(Product.class).equalTo(IS_FAVOURITE, true).findAllSorted(getSortMode(), Sort.ASCENDING);
     }
 }

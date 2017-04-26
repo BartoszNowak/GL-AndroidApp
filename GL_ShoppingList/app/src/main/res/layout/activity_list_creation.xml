@@ -10,7 +10,6 @@
         android:id="@+id/editText_listName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:maxLines="1"
         android:imeOptions="actionDone"
         android:hint="Nazwa"

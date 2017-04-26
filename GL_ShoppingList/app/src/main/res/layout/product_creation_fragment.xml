@@ -14,7 +14,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:hint="@string/name_hint"
-        android:inputType="textCapWords"/>
+        android:inputType="textCapWords"
+        android:imeOptions="actionNext"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,25 +24,27 @@
 
         <EditText
             android:id="@+id/editText_productPrice"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:hint="@string/price_hint"
             android:inputType="numberDecimal"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:imeOptions="actionNext"/>
 
         <EditText
             android:id="@+id/editText_productAmount"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:hint="@string/amount_hint"
             android:inputType="numberDecimal"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:imeOptions="actionDone"/>
 
     </LinearLayout>
 

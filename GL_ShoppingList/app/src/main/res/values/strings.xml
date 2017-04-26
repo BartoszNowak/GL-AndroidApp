@@ -11,4 +11,18 @@
     <string name="amount_hint">Ilość</string>
     <string name="favourite">Ulubione</string>
     <string name="confirm_text_add">DODAJ</string>
+    <string name="add_list">Dodaj Listę</string>
+    <string name="confirm">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="change_list_name">Zmień Nazwę Listy</string>
+    <string name="delete">Usuń</string>
+    <string name="delete_list">Usuń listę</string>
+    <string name="delete_all_lists">Usuń wszystkie listy</string>
+    <string name="delete_list_confirmation">Jesteś pewien, że chcesz usunąć listę %s?</string>
+    <string name="delete_all_lists_confirmation">Jesteś pewien, że chcesz usunąć wszystkie listy?</string>
+    <string name="sort_info_text">Sortuj według:</string>
+    <string name="add_product">Dodaj Produkt</string>
+    <string name="sort">Sortowanie</string>
+    <string name="filter">Filtrowanie</string>
+    <string name="filter_info_text">Pokaż produkty:</string>
 </resources>

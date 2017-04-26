@@ -18,6 +18,11 @@ public class Catalog extends RealmObject
     {
     }
 
+    public Catalog(final String name)
+    {
+        this.name = name;
+    }
+
     public long getId()
     {
         return id;

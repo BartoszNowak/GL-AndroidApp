@@ -12,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
+import com.example.bartekpc.gl_shoppinglist.model.ProductFilterMode;
+import com.example.bartekpc.gl_shoppinglist.model.ProductSortMode;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -22,6 +25,7 @@ public class ProductListActivity extends AppCompatActivity
 {
     private ProductListAdapter adapter;
     private int catalogIndex;
+    private FloatingActionMenu menu;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState)
@@ -32,41 +36,112 @@ public class ProductListActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
-
-        //Todo: mozna chyba samego inta wyslac
         Bundle extras = getIntent().getExtras();
         catalogIndex = extras.getInt("EXTRA_CATALOG_NUMBER");
-
-        //final List<Product> productList = DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId());
-        final List<Product> productList = DatabaseController.getAllProductsInCatalogSorted(DatabaseController.getCatalog(catalogIndex).getId(), ProductSortModes.SORT_BY_NAME);
+        final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
         setTitle(DatabaseController.getCatalog(catalogIndex).getName());
         adapter = new ProductListAdapter(productList, this);
         recyclerView.setAdapter(adapter);
-
-        final FloatingActionMenu menu = (FloatingActionMenu) findViewById(R.id.menu);
+        menu = (FloatingActionMenu) findViewById(R.id.menu);
         menu.setClosedOnTouchOutside(true);
+        addProductMenuButtonInit();
+        sortMenuButtonInit();
+        filterMenuButtonInit();
+    }
 
+    private void addProductMenuButtonInit()
+    {
         final FloatingActionButton addProductButton = (FloatingActionButton) findViewById(R.id.menu_item_addProduct);
         addProductButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View view)
             {
-                //buildAddProductDialog();
-                menu.close(true);
                 final Intent intent = new Intent(getApplicationContext(), ProductAddActivity.class);
                 intent.putExtra("EXTRA_CATALOG_ID", DatabaseController.getCatalog(catalogIndex).getId());
                 startActivityForResult(intent, 1);
-                //menu.close(true);
+                menu.close(true);
             }
         });
+    }
 
+    private void sortMenuButtonInit()
+    {
         final FloatingActionButton sortButton = (FloatingActionButton) findViewById(R.id.menu_item_Sort);
         sortButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View view)
             {
+                String[] values = {"Kolejności", "Nazwy", "Ceny"};
+                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.sort_info_text, values, DatabaseController.getSortModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
+                {
+                    @Override
+                    public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
+                    {
+                        switch(which)
+                        {
+                            case 0:
+                            {
+                                DatabaseController.setSortMode(ProductSortMode.SORT_DEFAULT);
+                                break;
+                            }
+                            case 1:
+                            {
+                                DatabaseController.setSortMode(ProductSortMode.SORT_BY_NAME);
+                                break;
+                            }
+                            case 2:
+                            {
+                                DatabaseController.setSortMode(ProductSortMode.SORT_BY_PRICE);
+                                break;
+                            }
+                        }
+                        final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
+                        adapter.changeList(productList);
+                        return true;
+                    }
+                }).show();
+                menu.close(true);
+            }
+        });
+    }
+
+    private void filterMenuButtonInit()
+    {
+        final String[] values = {"Wszystkie", "Do kupienia"};
+        final FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.menu_item_filter);
+        filterButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View view)
+            {
+                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.filter_info_text, values, DatabaseController.getFilterModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
+                {
+                    @Override
+                    public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
+                    {
+                        switch(which)
+                        {
+                            case 0:
+                            {
+                                DatabaseController.setFilterMode(ProductFilterMode.FILTER_ALL);
+                                break;
+                            }
+                            case 1:
+                            {
+                                DatabaseController.setFilterMode(ProductFilterMode.FILTER_NOT_PURCHASED);
+                                //final List<Product> productList = DatabaseController.getAllNotPurchasedProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId());
+                                //adapter.changeList(productList);
+                                break;
+                            }
+                        }
+                        final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
+                        adapter.changeList(productList);
+                        return true;
+                    }
+                }).show();
+                menu.close(true);
             }
         });
     }
@@ -94,31 +169,34 @@ public class ProductListActivity extends AppCompatActivity
             {
                 String nameInputText = nameInput.getText().toString();
                 String priceInputText = priceInput.getText().toString();
-                if("".equals(nameInputText))
+                if ("".equals(nameInputText))
                 {
                     AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
                     alertDialog.setTitle("Błąd");
                     alertDialog.setMessage("Nie podano nazwy produktu.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                            new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int which)
+                                {
                                     dialog.dismiss();
                                 }
                             });
                     alertDialog.show();
-                }
-                else
+                } else
                 {
-                    if("".equals(priceInputText)) priceInputText = "0";
+                    if ("".equals(priceInputText)) priceInputText = "0";
                     Product product = new Product(nameInputText, Float.parseFloat(priceInputText));
                     DatabaseController.addProduct(product, DatabaseController.getCatalog(catalogIndex).getId());
                     adapter.notifyDataSetChanged();
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.cancel();
             }
         });
@@ -141,33 +219,35 @@ public class ProductListActivity extends AppCompatActivity
             {
                 String nameInputText = nameInput.getText().toString();
                 String priceInputText = priceInput.getText().toString();
-                if("".equals(nameInputText))
+                if ("".equals(nameInputText))
                 {
                     AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
                     alertDialog.setTitle("Błąd");
                     alertDialog.setMessage("Nie podano nazwy produktu.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                            new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int which)
+                                {
                                     dialog.dismiss();
                                 }
                             });
                     alertDialog.show();
-                }
-                else
+                } else
                 {
                     float productPrice;
-                    if("".equals(priceInputText))
+                    if ("".equals(priceInputText))
                     {
-                        productPrice =  DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId()).get(index).getPrice();
-                    }
-                    else
+                        //productPrice =  DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId()).get(index).getPrice();
+                        //productPrice =  DatabaseController.getAllProductsInCatalog().get(index).getPrice();
+                        //TODO: create activity to edit product values
+                    } else
                     {
                         productPrice = Float.parseFloat(priceInputText);
                     }
-                    Product product = new Product(nameInputText, productPrice);
+                    //Product product = new Product(nameInputText, productPrice);
 
-                    DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
+                    //DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
                 }
                 adapter.notifyDataSetChanged();
             }

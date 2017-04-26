@@ -26,15 +26,23 @@
             android:layout_height="wrap_content"
             fab:fab_size="mini"
             android:src="@drawable/ic_add_24dp"
-            fab:fab_label="Dodaj Produkt"/>
+            fab:fab_label="@string/add_product"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_item_Sort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="mini"
-            android:src="@drawable/ic_add_24dp"
-            fab:fab_label="Sortowanie"/>
+            android:src="@drawable/ic_sort_24dp"
+            fab:fab_label="@string/sort"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_size="mini"
+            android:src="@drawable/ic_filter_list_24dp"
+            fab:fab_label="@string/filter"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

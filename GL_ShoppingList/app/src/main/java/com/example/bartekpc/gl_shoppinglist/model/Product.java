@@ -3,10 +3,6 @@ package com.example.bartekpc.gl_shoppinglist.model;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-/**
- * Created by BartekPC on 4/1/2017.
- */
-
 public class Product extends RealmObject
 {
     @PrimaryKey

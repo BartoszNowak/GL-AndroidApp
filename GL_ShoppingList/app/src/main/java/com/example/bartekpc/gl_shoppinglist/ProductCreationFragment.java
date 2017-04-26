@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.example.bartekpc.gl_shoppinglist.model.Product;
@@ -31,7 +32,7 @@ public class ProductCreationFragment extends Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.fragment, container, false);
+        return inflater.inflate(R.layout.product_creation_fragment, container, false);
     }
 
     //TODO activity life cycle
@@ -42,6 +43,7 @@ public class ProductCreationFragment extends Fragment
         final EditText editText_productName = (EditText) getView().findViewById(R.id.editText_productName);
         final EditText editText_productPrice = (EditText) getView().findViewById(R.id.editText_productPrice);
         final EditText editText_productAmount = (EditText) getView().findViewById(R.id.editText_productAmount);
+        final CheckBox checkBox_favourite = (CheckBox) getView().findViewById(R.id.checkBox_favourite);
         Button button_add = (Button) getView().findViewById(R.id.button_add);
         button_add.setOnClickListener(new View.OnClickListener()
         {
@@ -77,7 +79,9 @@ public class ProductCreationFragment extends Fragment
                     productAmount = Float.parseFloat(editText_productAmount.getText().toString());
                 }
                 Product product = new Product(productName, productPrice, productAmount);
+                product.setFavourite(checkBox_favourite.isChecked());
                 DatabaseController.addProduct(product, getArguments().getLong(CATALOG_ID));
+
                 ((ProductAddActivity)getActivity()).finishActivity();
             }
         });
