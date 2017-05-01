@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             fab:fab_size="mini"
             android:src="@drawable/ic_add_24dp"
-            fab:fab_label="Dodaj Listę"/>
+            fab:fab_label="@string/add_list"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_item_deleteAll"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             fab:fab_size="mini"
             android:src="@drawable/ic_clear_all_24dp"
-            fab:fab_label="Usuń wszystkie listy"/>
+            fab:fab_label="@string/delete_all_lists"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

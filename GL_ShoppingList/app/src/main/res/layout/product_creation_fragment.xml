@@ -3,19 +3,27 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:id="@+id/editText_productName"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="@string/name_hint"
-        android:inputType="textCapWords"
-        android:imeOptions="actionNext"/>
+        android:layout_marginTop="10dp"
+        app:errorEnabled="true">
+
+        <EditText
+            android:id="@+id/editText_productName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/name_hint"
+            android:inputType="textCapWords"
+            android:imeOptions="actionNext"/>
+
+    </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,10 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
             android:hint="@string/price_hint"
             android:inputType="numberDecimal"
             android:layout_weight="1"
+            android:maxLength="10"
             android:imeOptions="actionNext"/>
 
         <EditText
@@ -40,10 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
             android:hint="@string/amount_hint"
             android:inputType="numberDecimal"
             android:layout_weight="1"
+            android:maxLength="10"
             android:imeOptions="actionDone"/>
 
     </LinearLayout>

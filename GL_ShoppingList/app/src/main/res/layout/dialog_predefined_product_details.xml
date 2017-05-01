@@ -7,23 +7,23 @@
     android:padding="20dp">
 
     <EditText
-        android:id="@+id/editText_productName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:maxLines="1"
-        android:imeOptions="actionDone"
-        android:hint="@string/name_hint"
-        android:inputType="textCapWords"/>
-
-    <EditText
         android:id="@+id/editText_productPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:maxLines="1"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionNext"
         android:hint="@string/price_hint"
+        android:inputType="numberDecimal"/>
+
+    <EditText
+        android:id="@+id/editText_productAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxLines="1"
+        android:imeOptions="actionDone"
+        android:hint="@string/amount_hint"
         android:inputType="numberDecimal"/>
 
 </LinearLayout>

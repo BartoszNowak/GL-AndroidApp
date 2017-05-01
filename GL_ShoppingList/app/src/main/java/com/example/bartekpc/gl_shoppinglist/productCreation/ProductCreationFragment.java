@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.productCreation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,13 +11,22 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
+
+import eu.inmite.android.lib.validations.form.FormValidator;
+import eu.inmite.android.lib.validations.form.annotations.NotEmpty;
+import eu.inmite.android.lib.validations.form.callback.SimpleErrorPopupCallback;
 
 public class ProductCreationFragment extends Fragment
 {
     private static final String CATALOG_ID = "CATALOG_ID";
     private static final float PRICE_DEFAULT_VALUE = 0f;
     private static final float AMOUNT_DEFAULT_VALUE = 1f;
+
+    @NotEmpty(messageId = R.string.add_list)
+    private EditText editText_productName;
 
     public static Fragment getInstance(final long catalogId)
     {
@@ -35,12 +44,11 @@ public class ProductCreationFragment extends Fragment
         return inflater.inflate(R.layout.product_creation_fragment, container, false);
     }
 
-    //TODO activity life cycle
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        final EditText editText_productName = (EditText) getView().findViewById(R.id.editText_productName);
+        editText_productName = (EditText) getView().findViewById(R.id.editText_productName);
         final EditText editText_productPrice = (EditText) getView().findViewById(R.id.editText_productPrice);
         final EditText editText_productAmount = (EditText) getView().findViewById(R.id.editText_productAmount);
         final CheckBox checkBox_favourite = (CheckBox) getView().findViewById(R.id.checkBox_favourite);
@@ -81,7 +89,13 @@ public class ProductCreationFragment extends Fragment
                 Product product = new Product(productName, productPrice, productAmount);
                 product.setFavourite(checkBox_favourite.isChecked());
                 DatabaseController.addProduct(product, getArguments().getLong(CATALOG_ID));
-
+                if(product.isFavourite())
+                {
+                    product.setAmount(1);
+                    DatabaseController.addProduct(product, -1);
+                }
+                //TODO: why this works here??
+                //DatabaseController.addProduct(new Product("Mleko"), -1);
                 ((ProductAddActivity)getActivity()).finishActivity();
             }
         });

@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.productList;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,9 @@ import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.DecimalFormatUtils;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
 import java.util.List;
@@ -69,15 +72,22 @@ public class ProductListAdapter extends RecyclerView.Adapter
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu1:
-                                ((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
+                            {
+                                //((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
                                 break;
+                            }
                             case R.id.menu2:
+                            {
                                 DatabaseController.deleteProduct(selectedProduct);
                                 notifyDataSetChanged();
                                 break;
+                            }
                             case R.id.menu3:
-                                DatabaseController.setProductFavourite(selectedProduct, !selectedProduct.isFavourite());
+                            {
+                                DatabaseController.setAllProductsWithNameFavourite(selectedProduct.getName(), !selectedProduct.isFavourite());
+                                ((ProductListActivity)context).addOrRemoveFromFavourite(selectedProduct);
                                 break;
+                            }
                         }
                         return false;
                     }
@@ -96,7 +106,6 @@ public class ProductListAdapter extends RecyclerView.Adapter
     private static class ViewHolder extends RecyclerView.ViewHolder
     {
         final TextView textView_productName;
-        final TextView textView_productDescription;
         final TextView textView_price;
         final TextView textView_priceDetails;
         final TextView textView_options;
@@ -106,17 +115,15 @@ public class ProductListAdapter extends RecyclerView.Adapter
         {
             super(itemView);
             textView_productName = (TextView) itemView.findViewById(R.id.text);
-            textView_productDescription = (TextView) itemView.findViewById(R.id.opis);
             textView_price = (TextView) itemView.findViewById(R.id.textView_price);
             textView_priceDetails = (TextView) itemView.findViewById(R.id.textView_PriceDetails);
             textView_options = (TextView) itemView.findViewById(R.id.textView_options);
             checkBox_purchase = (CheckBox) itemView.findViewById(R.id.checkbox_purchase);
         }
 
-        void bindView(Product product)
+        void bindView(final Product product)
         {
             textView_productName.setText(product.getName());
-            textView_productDescription.setText(String.valueOf(product.getId()));
             float totalCost = product.getPrice() * product.getAmount();
             String totalCostText = String.format(Locale.getDefault(), " %s $", DecimalFormatUtils.formatCurrency(totalCost));
             textView_price.setText(totalCostText);

@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.catalogList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,12 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.productList.ProductListActivity;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 

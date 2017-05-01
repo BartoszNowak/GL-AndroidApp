@@ -9,11 +9,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProductAddActivity">
+        <activity android:name=".productCreation.ProductAddActivity">
         </activity>
-        <activity android:name=".ProductListActivity">
+        <activity android:name=".productList.ProductListActivity">
         </activity>
-        <activity android:name=".ListsActivity">
+        <activity android:name=".catalogList.ListsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

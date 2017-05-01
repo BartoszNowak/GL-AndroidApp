@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.bartekpc.gl_shoppinglist.ProductAddActivity">
+    tools:context="com.example.bartekpc.gl_shoppinglist.productCreation.ProductAddActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView_productList"

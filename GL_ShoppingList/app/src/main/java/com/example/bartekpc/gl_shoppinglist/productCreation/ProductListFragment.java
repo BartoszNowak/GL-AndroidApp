@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.productCreation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.DividerItemDecoration;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
 import java.util.ArrayList;
@@ -40,16 +43,19 @@ public class ProductListFragment extends Fragment
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         final List<Product> list;
+        int listType = -1;
         switch (getArguments().getInt(POSITION))
         {
             case 0:
             {
-                list = DatabaseController.getAllProducts();
+                list = DatabaseController.getAllNonFavouriteProductsFromCatalog(-1);
+                listType = 0;
                 break;
             }
             case 1:
             {
-                list = DatabaseController.getAllFavouriteProducts();
+                list = DatabaseController.getAllFavouriteProductsFromCatalog(-1);
+                listType = 1;
                 break;
             }
             default:
@@ -58,9 +64,8 @@ public class ProductListFragment extends Fragment
                 break;
             }
         }
-        adapter = new ProductCreationListsAdapter(list, getContext());
+        adapter = new ProductCreationListsAdapter(list, getContext(),listType, (ProductAddActivity)getActivity());
         recyclerView.setAdapter(adapter);
-
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
         return rootView;

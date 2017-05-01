@@ -25,4 +25,12 @@
     <string name="sort">Sortowanie</string>
     <string name="filter">Filtrowanie</string>
     <string name="filter_info_text">Pokaż produkty:</string>
+    <string name="cant_add_product">Nie można dodać produktu</string>
+    <string name="product_already_on_list">Ten produkt znajduje się już na tej liście.</string>
+    <string name="milk">Mleko</string>
+    <string name="bread">Chleb</string>
+    <string name="eggs">Jajka</string>
+    <string name="potatoes">Ziemniaki</string>
+    <string name="cheese">Ser</string>
+    <string name="butter">Masło</string>
 </resources>

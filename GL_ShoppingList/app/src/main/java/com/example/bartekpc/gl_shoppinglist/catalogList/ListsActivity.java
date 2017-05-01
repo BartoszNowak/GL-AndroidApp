@@ -1,4 +1,4 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.catalogList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,11 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.DialogFactory;
+import com.example.bartekpc.gl_shoppinglist.model.Product;
+import com.example.bartekpc.gl_shoppinglist.productList.ProductListActivity;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Catalog;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -51,7 +56,7 @@ public class ListsActivity extends AppCompatActivity
                         final String userInput = editText.getText().toString();
                         if(TextUtils.isEmpty(userInput))
                         {
-                            String catalogName = String.format("Lista %s", DatabaseController.numberOfCatalogs() + 1);
+                            String catalogName = String.format("Lista %s", DatabaseController.getNextCatalogKey() + 1);
                             DatabaseController.addCatalog(catalogName);
                         }
                         else
@@ -73,6 +78,7 @@ public class ListsActivity extends AppCompatActivity
             @Override
             public void onClick(final View view)
             {
+                //TODO: sometimes dialog doesn't appear but catalogs are deleted anyway
                 if(DatabaseController.numberOfCatalogs() > 0)
                 {
                     final String text = getString(R.string.delete_all_lists_confirmation);
@@ -89,7 +95,6 @@ public class ListsActivity extends AppCompatActivity
                 menu.close(true);
             }
         });
-
     }
 
     @Override

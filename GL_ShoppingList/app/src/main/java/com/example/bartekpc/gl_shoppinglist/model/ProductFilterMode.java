@@ -1,9 +1,5 @@
 package com.example.bartekpc.gl_shoppinglist.model;
 
-/**
- * Created by BartekPC on 4/26/2017.
- */
-
 public enum ProductFilterMode
 {
     FILTER_ALL(0),

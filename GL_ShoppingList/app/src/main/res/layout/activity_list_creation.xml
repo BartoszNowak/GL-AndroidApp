@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:imeOptions="actionDone"
-        android:hint="Nazwa"
+        android:hint="@string/name_hint"
         android:inputType="textCapWords"/>
 
 </LinearLayout>

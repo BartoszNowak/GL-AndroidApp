@@ -33,8 +33,25 @@ public class DialogFactory
                 .build();
     }
 
+    public static MaterialDialog getInformationDialog(final Context context, final int title, final int content)
+    {
+        return getBuilder(context)
+                .title(title)
+                .content(content)
+                .canceledOnTouchOutside(false)
+                .positiveText(R.string.confirm)
+                .onPositive(new MaterialDialog.SingleButtonCallback()
+                {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
+                    {
+                        dialog.dismiss();
+                    }
+                })
+                .build();
+    }
+
     public static MaterialDialog getSingleChoiceDialog(final Context context, final int title, final String options[], final int startingIndex,
-                                                       //final MaterialDialog.SingleButtonCallback positiveButtonCallback,
                                                        final MaterialDialog.ListCallbackSingleChoice listCallbackSingleChoice)
     {
         return getBuilder(context)
@@ -42,7 +59,6 @@ public class DialogFactory
                 .items(options)
                 .itemsCallbackSingleChoice(startingIndex ,listCallbackSingleChoice)
                 .positiveText(R.string.confirm)
-                //.onPositive(positiveButtonCallback)
                 .build();
     }
 

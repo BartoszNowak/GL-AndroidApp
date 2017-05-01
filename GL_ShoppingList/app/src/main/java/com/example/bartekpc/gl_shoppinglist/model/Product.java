@@ -2,7 +2,11 @@ package com.example.bartekpc.gl_shoppinglist.model;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Product extends RealmObject
 {
     @PrimaryKey
@@ -13,6 +17,15 @@ public class Product extends RealmObject
     private boolean isPurchased;
     private boolean isFavourite;
     private long catalogId;
+
+    public Product(final String name)
+    {
+        this.name = name;
+        //TODO:
+        this.isFavourite = false;
+        this.price = 0f;
+        this.amount = 1f;
+    }
 
     public Product(final String name, final float price)
     {
@@ -30,75 +43,5 @@ public class Product extends RealmObject
 
     public Product()
     {
-    }
-
-    public long getId()
-    {
-        return id;
-    }
-
-    public void setId(final long id)
-    {
-        this.id = id;
-    }
-
-    public long getCatalogId()
-    {
-        return catalogId;
-    }
-
-    public void setCatalogId(final long catalogId)
-    {
-        this.catalogId = catalogId;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(final String name)
-    {
-        this.name = name;
-    }
-
-    public float getPrice()
-    {
-        return price;
-    }
-
-    public void setPrice(final float price)
-    {
-        this.price = price;
-    }
-
-    public float getAmount()
-    {
-        return amount;
-    }
-
-    public void setAmount(final int amount)
-    {
-        this.amount = amount;
-    }
-
-    public boolean isPurchased()
-    {
-        return isPurchased;
-    }
-
-    public void setPurchased(final boolean purchased)
-    {
-        isPurchased = purchased;
-    }
-
-    public boolean isFavourite()
-    {
-        return isFavourite;
-    }
-
-    public void setFavourite(final boolean favourite)
-    {
-        isFavourite = favourite;
     }
 }

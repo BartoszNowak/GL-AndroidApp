@@ -1,13 +1,12 @@
 package com.example.bartekpc.gl_shoppinglist.model;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- * Created by BartekPC on 4/8/2017.
- */
-
+@Getter
+@Setter
 public class Catalog extends RealmObject
 {
     @PrimaryKey
@@ -16,30 +15,5 @@ public class Catalog extends RealmObject
 
     public Catalog()
     {
-    }
-
-    public Catalog(final String name)
-    {
-        this.name = name;
-    }
-
-    public long getId()
-    {
-        return id;
-    }
-
-    public void setId(final long id)
-    {
-        this.id = id;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(final String name)
-    {
-        this.name = name;
     }
 }

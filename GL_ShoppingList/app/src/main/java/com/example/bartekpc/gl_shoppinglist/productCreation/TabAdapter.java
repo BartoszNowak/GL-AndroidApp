@@ -1,12 +1,8 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.productCreation;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
-/**
- * Created by BartekPC on 4/19/2017.
- */
 
 public class TabAdapter extends FragmentPagerAdapter
 {

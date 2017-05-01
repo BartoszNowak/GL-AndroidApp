@@ -1,21 +1,22 @@
-package com.example.bartekpc.gl_shoppinglist;
+package com.example.bartekpc.gl_shoppinglist.productList;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.DialogFactory;
+import com.example.bartekpc.gl_shoppinglist.DividerItemDecoration;
+import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 import com.example.bartekpc.gl_shoppinglist.model.ProductFilterMode;
 import com.example.bartekpc.gl_shoppinglist.model.ProductSortMode;
+import com.example.bartekpc.gl_shoppinglist.productCreation.ProductAddActivity;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -47,6 +48,7 @@ public class ProductListActivity extends AppCompatActivity
         addProductMenuButtonInit();
         sortMenuButtonInit();
         filterMenuButtonInit();
+        addInitialData();
     }
 
     private void addProductMenuButtonInit()
@@ -131,8 +133,6 @@ public class ProductListActivity extends AppCompatActivity
                             case 1:
                             {
                                 DatabaseController.setFilterMode(ProductFilterMode.FILTER_NOT_PURCHASED);
-                                //final List<Product> productList = DatabaseController.getAllNotPurchasedProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId());
-                                //adapter.changeList(productList);
                                 break;
                             }
                         }
@@ -153,113 +153,35 @@ public class ProductListActivity extends AppCompatActivity
         adapter.notifyDataSetChanged();
     }
 
-    private void buildAddProductDialog()
+    void addOrRemoveFromFavourite(final Product product)
     {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(ProductListActivity.this);
-        builder.setTitle("Dodaj produkt");
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View dialogView = layoutInflater.inflate(R.layout.activity_product_creation, null);
-        final EditText nameInput = (EditText) dialogView.findViewById(R.id.editText_productName);
-        final EditText priceInput = (EditText) dialogView.findViewById(R.id.editText_productPrice);
-        builder.setView(dialogView);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        Product favouriteProduct = DatabaseController.findProduct(product.getName());
+        if(favouriteProduct != null)
         {
-            @Override
-            public void onClick(final DialogInterface dialog, final int which)
-            {
-                String nameInputText = nameInput.getText().toString();
-                String priceInputText = priceInput.getText().toString();
-                if ("".equals(nameInputText))
-                {
-                    AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
-                    alertDialog.setTitle("Błąd");
-                    alertDialog.setMessage("Nie podano nazwy produktu.");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener()
-                            {
-                                public void onClick(DialogInterface dialog, int which)
-                                {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                } else
-                {
-                    if ("".equals(priceInputText)) priceInputText = "0";
-                    Product product = new Product(nameInputText, Float.parseFloat(priceInputText));
-                    DatabaseController.addProduct(product, DatabaseController.getCatalog(catalogIndex).getId());
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+            DatabaseController.deleteProduct(favouriteProduct);
+        }
+        else
         {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                dialog.cancel();
-            }
-        });
-        builder.show();
+            favouriteProduct = new Product(product.getName(), product.getPrice());
+            favouriteProduct.setFavourite(true);
+            favouriteProduct.setPurchased(false);
+            DatabaseController.addProduct(favouriteProduct, -1);
+        }
     }
 
-    public void buildUpdateProductDialog(final int index)
+    private void addInitialData()
     {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(ProductListActivity.this);
-        builder.setTitle("Edytuj produkt");
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View dialogView = layoutInflater.inflate(R.layout.activity_product_creation, null);
-        final EditText nameInput = (EditText) dialogView.findViewById(R.id.editText_productName);
-        final EditText priceInput = (EditText) dialogView.findViewById(R.id.editText_productPrice);
-        builder.setView(dialogView);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        String[] products = {
+                getString(R.string.milk),
+                getString(R.string.bread),
+                getString(R.string.eggs),
+                getString(R.string.potatoes),
+                getString(R.string.cheese),
+                getString(R.string.butter)
+        };
+        for(String name : products)
         {
-            @Override
-            public void onClick(final DialogInterface dialog, final int which)
-            {
-                String nameInputText = nameInput.getText().toString();
-                String priceInputText = priceInput.getText().toString();
-                if ("".equals(nameInputText))
-                {
-                    AlertDialog alertDialog = new AlertDialog.Builder(ProductListActivity.this).create();
-                    alertDialog.setTitle("Błąd");
-                    alertDialog.setMessage("Nie podano nazwy produktu.");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener()
-                            {
-                                public void onClick(DialogInterface dialog, int which)
-                                {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                } else
-                {
-                    float productPrice;
-                    if ("".equals(priceInputText))
-                    {
-                        //productPrice =  DatabaseController.getAllProductsInCatalog(DatabaseController.getCatalog(catalogIndex).getId()).get(index).getPrice();
-                        //productPrice =  DatabaseController.getAllProductsInCatalog().get(index).getPrice();
-                        //TODO: create activity to edit product values
-                    } else
-                    {
-                        productPrice = Float.parseFloat(priceInputText);
-                    }
-                    //Product product = new Product(nameInputText, productPrice);
-
-                    //DatabaseController.updateProduct(index, DatabaseController.getCatalog(catalogIndex).getId(), product);
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                dialog.cancel();
-            }
-        });
-        builder.show();
+            DatabaseController.addProduct(new Product(name), -1);
+        }
     }
 }
