@@ -1,69 +1,50 @@
 package com.example.bartekpc.gl_shoppinglist.productCreation;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.bartekpc.gl_shoppinglist.DecimalFormatUtils;
-import com.example.bartekpc.gl_shoppinglist.DialogFactory;
 import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductCreationListsAdapter extends RecyclerView.Adapter
+class ProductCreationListsAdapter extends RecyclerView.Adapter
 {
-    public interface OnRecyclerItemClickListener {
+    private static final int LIST_TYPE_PREDEFINED = 0;
+    private static final String EMPTY = "";
+
+    private final List<Product> productList = new ArrayList<>();
+    private OnRecyclerItemClickListener onRecyclerItemClickListener;
+    private final int type;
+    private static String costTextResource;
+
+    interface OnRecyclerItemClickListener {
 
         void onRecyclerItemClick(int dialogType, Product product);
     }
 
-    private final List<Product> productList;
-    private final Context context;
-    private OnRecyclerItemClickListener onRecyclerItemClickListener;
-    private final int type;
-
-    /*public ProductCreationListsAdapter(final List<Product> list, final Context context)
-    {
-        this.productList = list;
-        this.context = context;
-
-        this.type = 0;
-    }*/
-
-    public ProductCreationListsAdapter(final List<Product> list, final Context context, final OnRecyclerItemClickListener onRecyclerItemClickListener)
-    {
-        this.productList = list;
-        this.context = context;
-        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
-        this.type = 0;
-    }
-    public ProductCreationListsAdapter(final List<Product> list, final Context context, final int type,
+    ProductCreationListsAdapter(final List<Product> list, final int type, final Context context,
                                        final OnRecyclerItemClickListener onRecyclerItemClickListener)
     {
-        this.productList = list;
-        this.context = context;
+        swapList(list);
         this.type = type;
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
+        costTextResource = context.getResources().getString(R.string.string_plus_currency);
     }
 
-    /*public ProductCreationListsAdapter(final List<Product> list, final Context context, final int type)
+    private void swapList(final List<Product> list)
     {
-        this.productList = list;
-        this.context = context;
-        this.type = type;
-    }*/
+        productList.clear();
+        productList.addAll(list);
+        notifyDataSetChanged();
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType)
@@ -75,7 +56,6 @@ public class ProductCreationListsAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position)
     {
-        //final Product selectedProduct = productList.get(holder.getAdapterPosition());
         ((ViewHolder) holder).bindView(productList.get(position));
     }
 
@@ -99,7 +79,6 @@ public class ProductCreationListsAdapter extends RecyclerView.Adapter
             super(itemView);
             textView_productName = (TextView) itemView.findViewById(R.id.text);
             textView_price = (TextView) itemView.findViewById(R.id.textView_price);
-
             this.onRecyclerItemClickListener = onRecyclerItemClickListener;
             this.type = type;
             this.productList = productList;
@@ -109,14 +88,14 @@ public class ProductCreationListsAdapter extends RecyclerView.Adapter
         void bindView(Product product)
         {
             textView_productName.setText(product.getName());
-            if(type == 0)
+            if(type == LIST_TYPE_PREDEFINED)
             {
-                textView_price.setText("");
+                textView_price.setText(EMPTY);
             }
             else
             {
                 float totalCost = product.getPrice() * product.getAmount();
-                String totalCostText = String.format(Locale.getDefault(), " %s $", DecimalFormatUtils.formatCurrency(totalCost));
+                String totalCostText = String.format(Locale.getDefault(), costTextResource, DecimalFormatUtils.formatCurrency(totalCost));
                 textView_price.setText(totalCostText);
             }
         }

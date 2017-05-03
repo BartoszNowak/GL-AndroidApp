@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class Product extends RealmObject
 {
+    private static final float AMOUNT_DEFAULT_VALUE = 1f;
+
     @PrimaryKey
     private long id;
     private String name;
@@ -21,17 +23,14 @@ public class Product extends RealmObject
     public Product(final String name)
     {
         this.name = name;
-        //TODO:
         this.isFavourite = false;
-        this.price = 0f;
-        this.amount = 1f;
     }
 
     public Product(final String name, final float price)
     {
         this.name = name;
         this.price = price;
-        amount = 1;
+        amount = AMOUNT_DEFAULT_VALUE;
     }
 
     public Product(final String name, final float price, final float amount)

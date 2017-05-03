@@ -1,4 +1,21 @@
 <resources>
+    <string-array name="sort_types">
+        <item>Order</item>
+        <item>Name</item>
+        <item>Price</item>
+    </string-array>
+
+    <string-array name="filter_types">
+        <item>All</item>
+        <item>To buy</item>
+    </string-array>
+
+    <string-array name="tab_titles">
+        <item>Popular</item>
+        <item>Favourite</item>
+        <item>New Product</item>
+    </string-array>
+
     <string name="app_name">GL_ShoppingList</string>
     <string name="title_activity_main_list">MainListActivity</string>
 
@@ -17,20 +34,24 @@
     <string name="change_list_name">Change list name</string>
     <string name="delete">Delete</string>
     <string name="delete_list">Delete list</string>
-    <string name="delete_all_lists">Usuń wszystkie listy</string>
-    <string name="delete_list_confirmation">Jesteś pewien, że chcesz usunąć listę %s?</string>
-    <string name="delete_all_lists_confirmation">Jesteś pewien, że chcesz usunąć wszystkie listy?</string>
-    <string name="sort_info_text">Sortuj według:</string>
-    <string name="add_product">Dodaj Produkt</string>
-    <string name="sort">Sortowanie</string>
-    <string name="filter">Filtrowanie</string>
-    <string name="filter_info_text">Pokaż produkty:</string>
-    <string name="cant_add_product">Nie można dodać produktu</string>
-    <string name="product_already_on_list">Ten produkt znajduje się już na tej liście.</string>
-    <string name="milk">Mleko</string>
-    <string name="bread">Chleb</string>
-    <string name="eggs">Jajka</string>
-    <string name="potatoes">Ziemniaki</string>
-    <string name="cheese">Ser</string>
-    <string name="butter">Masło</string>
+    <string name="delete_all_lists">Delete all lists</string>
+    <string name="delete_list_confirmation">Are you sure you want to delete list %s?</string>
+    <string name="delete_all_lists_confirmation">Are you sure you want to delete all lists?</string>
+    <string name="sort_info_text">Sort by:</string>
+    <string name="add_product">Add product</string>
+    <string name="sort">Sort</string>
+    <string name="filter">Filter</string>
+    <string name="filter_info_text">Show products:</string>
+    <string name="cant_add_product">Cannot add product</string>
+    <string name="product_already_on_list">Product is already on the list.</string>
+    <string name="milk">Milk</string>
+    <string name="bread">Bread</string>
+    <string name="eggs">Eggs</string>
+    <string name="potatoes">Potatoes</string>
+    <string name="cheese">Cheese</string>
+    <string name="butter">Butter</string>
+    <string name="field_cannot_be_empty">This field cannot be empty</string>
+    <string name="list_plus_int" formatted="false">List %d</string>
+    <string name="string_plus_currency" formatted="false">%s$</string>
+    <string name="price_info_string" formatted="false">(%s x %s$)</string>
 </resources>

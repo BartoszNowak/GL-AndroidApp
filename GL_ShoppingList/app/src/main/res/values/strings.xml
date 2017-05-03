@@ -1,4 +1,21 @@
 <resources>
+    <string-array name="sort_types">
+        <item>Kolejności</item>
+        <item>Nazwy</item>
+        <item>Ceny</item>
+    </string-array>
+
+    <string-array name="filter_types">
+        <item>Wszystkie</item>
+        <item>Do kupienia</item>
+    </string-array>
+
+    <string-array name="tab_titles">
+        <item>Popularne</item>
+        <item>Ulubione</item>
+        <item>Nowy Produkt</item>
+    </string-array>
+
     <string name="app_name">GL_ShoppingList</string>
     <string name="title_activity_main_list">MainListActivity</string>
 
@@ -21,7 +38,7 @@
     <string name="delete_list_confirmation">Jesteś pewien, że chcesz usunąć listę %s?</string>
     <string name="delete_all_lists_confirmation">Jesteś pewien, że chcesz usunąć wszystkie listy?</string>
     <string name="sort_info_text">Sortuj według:</string>
-    <string name="add_product">Dodaj Produkt</string>
+    <string name="add_product">Dodaj produkt</string>
     <string name="sort">Sortowanie</string>
     <string name="filter">Filtrowanie</string>
     <string name="filter_info_text">Pokaż produkty:</string>
@@ -33,4 +50,9 @@
     <string name="potatoes">Ziemniaki</string>
     <string name="cheese">Ser</string>
     <string name="butter">Masło</string>
+    <string name="field_cannot_be_empty">To pole nie może być puste</string>
+    <string name="list_plus_int" formatted="false">Lista %d</string>
+    <string name="string_plus_currency" formatted="false">%szł</string>
+    <string name="price_info_string" formatted="false">(%s x %szł)</string>
+
 </resources>

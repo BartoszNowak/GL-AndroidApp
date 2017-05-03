@@ -26,7 +26,11 @@ import java.util.List;
 
 public class ListsActivity extends AppCompatActivity
 {
+    private static final String EXTRA_CATALOG_NUMBER = "EXTRA_CATALOG_NUMBER";
+
+    private FloatingActionMenu menu;
     private ListAdapter adapter;
+    private List<Catalog> list;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState)
@@ -35,43 +39,17 @@ public class ListsActivity extends AppCompatActivity
         setContentView(R.layout.activity_lists);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView_catalogList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final List<Catalog> list = DatabaseController.getAllCatalogs();
+        list = DatabaseController.getAllCatalogs();
         adapter = new ListAdapter(list, this);
         recyclerView.setAdapter(adapter);
-        final FloatingActionMenu menu = (FloatingActionMenu) findViewById(R.id.menu);
+        menu = (FloatingActionMenu) findViewById(R.id.menu);
         menu.setClosedOnTouchOutside(true);
-        final FloatingActionButton createCatalogButton = (FloatingActionButton) findViewById(R.id.menu_item_addCatalog);
-        createCatalogButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(final View view)
-            {
-                View viewView = LayoutInflater.from(ListsActivity.this).inflate(R.layout.activity_list_creation, null);
-                DialogFactory.getCustomViewDialog(ListsActivity.this, R.string.add_list, viewView, new MaterialDialog.SingleButtonCallback()
-                {
-                    @Override
-                    public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
-                    {
-                        EditText editText = (EditText) dialog.getCustomView().findViewById(R.id.editText_listName);
-                        final String userInput = editText.getText().toString();
-                        if(TextUtils.isEmpty(userInput))
-                        {
-                            String catalogName = String.format("Lista %s", DatabaseController.getNextCatalogKey() + 1);
-                            DatabaseController.addCatalog(catalogName);
-                        }
-                        else
-                        {
-                            DatabaseController.addCatalog(userInput);
-                        }
-                        final Intent intent = new Intent(getApplicationContext(), ProductListActivity.class);
-                        intent.putExtra("EXTRA_CATALOG_NUMBER", DatabaseController.numberOfCatalogs() - 1);
-                        startActivity(intent);
-                    }
-                }).show();
-                menu.close(true);
-            }
-        });
+        addCatalogButtonInit();
+        deleteAllButtonInit();
+    }
 
+    private void deleteAllButtonInit()
+    {
         final FloatingActionButton deleteAllButton = (FloatingActionButton) findViewById(R.id.menu_item_deleteAll);
         deleteAllButton.setOnClickListener(new View.OnClickListener()
         {
@@ -88,10 +66,45 @@ public class ListsActivity extends AppCompatActivity
                         public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
                         {
                             DatabaseController.deleteAllCatalogs();
-                            adapter.notifyDataSetChanged();
+                            adapter.swapList(list);
                         }
                     }).show();
                 }
+                menu.close(true);
+            }
+        });
+    }
+
+    private void addCatalogButtonInit()
+    {
+        final FloatingActionButton createCatalogButton = (FloatingActionButton) findViewById(R.id.menu_item_addCatalog);
+        createCatalogButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View view)
+            {
+                View viewView = LayoutInflater.from(ListsActivity.this).inflate(R.layout.activity_list_creation, null);
+                DialogFactory.getCustomViewDialog(ListsActivity.this, R.string.add_list, viewView, new MaterialDialog.SingleButtonCallback()
+                {
+                    @Override
+                    public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
+                    {
+                        EditText editText = (EditText) dialog.getCustomView().findViewById(R.id.editText_listName);
+                        final String userInput = editText.getText().toString();
+                        if(TextUtils.isEmpty(userInput))
+                        {
+                            String catalogName = String.format(getString(R.string.list_plus_int), DatabaseController.getNextCatalogKey() + 1);
+                            DatabaseController.addCatalog(catalogName);
+                        }
+                        else
+                        {
+                            DatabaseController.addCatalog(userInput);
+                        }
+                        final Intent intent = new Intent(getApplicationContext(), ProductListActivity.class);
+                        intent.putExtra(EXTRA_CATALOG_NUMBER, DatabaseController.numberOfCatalogs() - 1);
+                        startActivity(intent);
+                    }
+                }).show();
                 menu.close(true);
             }
         });
@@ -101,7 +114,7 @@ public class ListsActivity extends AppCompatActivity
     public void onRestart()
     {
         super.onRestart();
-        adapter.notifyDataSetChanged();
+        adapter.swapList(list);
     }
 
     public void showUpdateListNameDialog(final Catalog catalog)
@@ -117,7 +130,7 @@ public class ListsActivity extends AppCompatActivity
                 if(!TextUtils.isEmpty(userInput))
                 {
                     DatabaseController.updateCatalogName(catalog, userInput);
-                    adapter.notifyDataSetChanged();
+                    adapter.swapList(list);
                 }
             }
         }).show();
@@ -135,14 +148,14 @@ public class ListsActivity extends AppCompatActivity
                 public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
                 {
                     DatabaseController.deleteCatalog(catalog);
-                    adapter.notifyDataSetChanged();
+                    adapter.swapList(list);
                 }
             }).show();
         }
         else
         {
             DatabaseController.deleteCatalog(catalog);
-            adapter.notifyDataSetChanged();
+            adapter.swapList(list);
         }
     }
 }

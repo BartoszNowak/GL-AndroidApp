@@ -16,25 +16,31 @@ import com.example.bartekpc.gl_shoppinglist.DecimalFormatUtils;
 import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductListAdapter extends RecyclerView.Adapter
+class ProductListAdapter extends RecyclerView.Adapter
 {
     private static final int FAVOURITE_CHECKBOX_MENU_OPTION = 2;
 
-    private List<Product> productList;
+    private final List<Product> productList = new ArrayList<>();
     private final Context context;
+    private static String totalCostTextResource;
+    private static String costDetailsTextResource;
 
-    public ProductListAdapter(final List<Product> list, final Context context)
+    ProductListAdapter(final List<Product> list, final Context context)
     {
-        this.productList = list;
+        swapList(list);
         this.context = context;
+        totalCostTextResource = context.getResources().getString(R.string.string_plus_currency);
+        costDetailsTextResource = context.getResources().getString(R.string.price_info_string);
     }
 
-    public void changeList(final List<Product> list)
+    void swapList(final List<Product> list)
     {
-        productList = list;
+        productList.clear();
+        productList.addAll(list);
         notifyDataSetChanged();
     }
 
@@ -64,37 +70,44 @@ public class ProductListAdapter extends RecyclerView.Adapter
             @Override
             public void onClick(final View v)
             {
-                final PopupMenu popup = new PopupMenu(context, ((ProductListAdapter.ViewHolder) holder).textView_options);
-                popup.inflate(R.menu.product_options_menu);
-                popup.getMenu().getItem(FAVOURITE_CHECKBOX_MENU_OPTION).setChecked(selectedProduct.isFavourite());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.menu1:
-                            {
-                                //((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
-                                break;
-                            }
-                            case R.id.menu2:
-                            {
-                                DatabaseController.deleteProduct(selectedProduct);
-                                notifyDataSetChanged();
-                                break;
-                            }
-                            case R.id.menu3:
-                            {
-                                DatabaseController.setAllProductsWithNameFavourite(selectedProduct.getName(), !selectedProduct.isFavourite());
-                                ((ProductListActivity)context).addOrRemoveFromFavourite(selectedProduct);
-                                break;
-                            }
-                        }
-                        return false;
-                    }
-                });
-                popup.show();
+                showPopupMenu((ViewHolder) holder, selectedProduct);
             }
         });
+    }
+
+    private void showPopupMenu(final ViewHolder holder, final Product selectedProduct)
+    {
+        final PopupMenu popup = new PopupMenu(context, holder.textView_options);
+        popup.inflate(R.menu.product_options_menu);
+        popup.getMenu().getItem(FAVOURITE_CHECKBOX_MENU_OPTION).setChecked(selectedProduct.isFavourite());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu1:
+                    {
+                        //TODO: add product update option
+                        //((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
+                        break;
+                    }
+                    case R.id.menu2:
+                    {
+                        DatabaseController.deleteProduct(selectedProduct);
+                        swapList(productList);
+                        break;
+                    }
+                    case R.id.menu3:
+                    {
+                        //TODO: provide possibility to add predefined to favourite
+                        DatabaseController.setAllProductsWithNameFavourite(selectedProduct.getName(), !selectedProduct.isFavourite());
+                        ((ProductListActivity)context).addOrRemoveFromFavourite(selectedProduct);
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+        popup.show();
     }
 
     @Override
@@ -125,11 +138,11 @@ public class ProductListAdapter extends RecyclerView.Adapter
         {
             textView_productName.setText(product.getName());
             float totalCost = product.getPrice() * product.getAmount();
-            String totalCostText = String.format(Locale.getDefault(), " %s $", DecimalFormatUtils.formatCurrency(totalCost));
+            String totalCostText = String.format(Locale.getDefault(), totalCostTextResource, DecimalFormatUtils.formatCurrency(totalCost));
             textView_price.setText(totalCostText);
             String amount = DecimalFormatUtils.formatAmount(product.getAmount());
             String price = DecimalFormatUtils.formatCurrency(product.getPrice());
-            String costDetails = String.format(Locale.getDefault(), "(%s x %s $)", amount, price);
+            String costDetails = String.format(Locale.getDefault(), costDetailsTextResource, amount, price);
             textView_priceDetails.setText(costDetails);
             checkBox_purchase.setOnCheckedChangeListener(null);
             checkBox_purchase.setChecked(product.isPurchased());

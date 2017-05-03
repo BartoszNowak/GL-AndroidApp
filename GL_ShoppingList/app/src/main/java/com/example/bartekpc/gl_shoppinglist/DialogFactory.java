@@ -62,6 +62,17 @@ public class DialogFactory
                 .build();
     }
 
+    public static MaterialDialog getSingleChoiceDialog(final Context context, final int title, final int options, final int startingIndex,
+                                                       final MaterialDialog.ListCallbackSingleChoice listCallbackSingleChoice)
+    {
+        return getBuilder(context)
+                .title(title)
+                .items(options)
+                .itemsCallbackSingleChoice(startingIndex ,listCallbackSingleChoice)
+                .positiveText(R.string.confirm)
+                .build();
+    }
+
     private static MaterialDialog.Builder getBuilder(final Context context)
     {
         return new MaterialDialog.Builder(context)

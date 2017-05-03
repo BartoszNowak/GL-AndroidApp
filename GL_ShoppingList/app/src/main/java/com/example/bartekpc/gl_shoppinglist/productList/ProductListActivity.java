@@ -24,9 +24,15 @@ import java.util.List;
 
 public class ProductListActivity extends AppCompatActivity
 {
+    private static final String EXTRA_CATALOG_NUMBER = "EXTRA_CATALOG_NUMBER";
+    private static final String EXTRA_CATALOG_ID = "EXTRA_CATALOG_ID";
+    private static final int NO_CATALOG = -1;
+    private static final int REQUEST_CODE = 1;
+
     private ProductListAdapter adapter;
     private int catalogIndex;
     private FloatingActionMenu menu;
+    private List<Product> productList;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState)
@@ -38,8 +44,8 @@ public class ProductListActivity extends AppCompatActivity
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         Bundle extras = getIntent().getExtras();
-        catalogIndex = extras.getInt("EXTRA_CATALOG_NUMBER");
-        final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
+        catalogIndex = extras.getInt(EXTRA_CATALOG_NUMBER);
+        productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
         setTitle(DatabaseController.getCatalog(catalogIndex).getName());
         adapter = new ProductListAdapter(productList, this);
         recyclerView.setAdapter(adapter);
@@ -48,7 +54,7 @@ public class ProductListActivity extends AppCompatActivity
         addProductMenuButtonInit();
         sortMenuButtonInit();
         filterMenuButtonInit();
-        addInitialData();
+        if(DatabaseController.getAllNonFavouriteProductsFromCatalog(-1).size() == 0) { addInitialData(); }
     }
 
     private void addProductMenuButtonInit()
@@ -60,8 +66,8 @@ public class ProductListActivity extends AppCompatActivity
             public void onClick(final View view)
             {
                 final Intent intent = new Intent(getApplicationContext(), ProductAddActivity.class);
-                intent.putExtra("EXTRA_CATALOG_ID", DatabaseController.getCatalog(catalogIndex).getId());
-                startActivityForResult(intent, 1);
+                intent.putExtra(EXTRA_CATALOG_ID, DatabaseController.getCatalog(catalogIndex).getId());
+                startActivityForResult(intent, REQUEST_CODE);
                 menu.close(true);
             }
         });
@@ -75,8 +81,7 @@ public class ProductListActivity extends AppCompatActivity
             @Override
             public void onClick(final View view)
             {
-                String[] values = {"Kolejności", "Nazwy", "Ceny"};
-                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.sort_info_text, values, DatabaseController.getSortModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
+                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.sort_info_text, R.array.sort_types, DatabaseController.getSortModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
                 {
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
@@ -100,7 +105,7 @@ public class ProductListActivity extends AppCompatActivity
                             }
                         }
                         final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
-                        adapter.changeList(productList);
+                        adapter.swapList(productList);
                         return true;
                     }
                 }).show();
@@ -111,14 +116,13 @@ public class ProductListActivity extends AppCompatActivity
 
     private void filterMenuButtonInit()
     {
-        final String[] values = {"Wszystkie", "Do kupienia"};
         final FloatingActionButton filterButton = (FloatingActionButton) findViewById(R.id.menu_item_filter);
         filterButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View view)
             {
-                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.filter_info_text, values, DatabaseController.getFilterModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
+                DialogFactory.getSingleChoiceDialog(ProductListActivity.this, R.string.filter_info_text, R.array.filter_types, DatabaseController.getFilterModeIndex(), new MaterialDialog.ListCallbackSingleChoice()
                 {
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
@@ -137,7 +141,7 @@ public class ProductListActivity extends AppCompatActivity
                             }
                         }
                         final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
-                        adapter.changeList(productList);
+                        adapter.swapList(productList);
                         return true;
                     }
                 }).show();
@@ -150,7 +154,7 @@ public class ProductListActivity extends AppCompatActivity
     public void onRestart()
     {
         super.onRestart();
-        adapter.notifyDataSetChanged();
+        adapter.swapList(productList);
     }
 
     void addOrRemoveFromFavourite(final Product product)
@@ -165,7 +169,7 @@ public class ProductListActivity extends AppCompatActivity
             favouriteProduct = new Product(product.getName(), product.getPrice());
             favouriteProduct.setFavourite(true);
             favouriteProduct.setPurchased(false);
-            DatabaseController.addProduct(favouriteProduct, -1);
+            DatabaseController.addProduct(favouriteProduct, NO_CATALOG);
         }
     }
 
@@ -181,7 +185,7 @@ public class ProductListActivity extends AppCompatActivity
         };
         for(String name : products)
         {
-            DatabaseController.addProduct(new Product(name), -1);
+            DatabaseController.addProduct(new Product(name), NO_CATALOG);
         }
     }
 }

@@ -4,13 +4,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class TabAdapter extends FragmentPagerAdapter
+class TabAdapter extends FragmentPagerAdapter
 {
     private static final int TAB_COUNT = 3;
+    private static final int NEW_PRODUCT_FRAGMENT_INDEX = 2;
+    //TODO: add array to resources
     private String tabTitles[] = new String[] { "Popularne", "Ulubione", "Nowy Produkt" };
     private long catalogId;
 
-    public TabAdapter(final FragmentManager fm, final long catalogId)
+    TabAdapter(final FragmentManager fm, final long catalogId)
     {
         super(fm);
         this.catalogId = catalogId;
@@ -22,7 +24,7 @@ public class TabAdapter extends FragmentPagerAdapter
         Fragment fragment;
         switch (position)
         {
-            case 2:
+            case NEW_PRODUCT_FRAGMENT_INDEX:
             {
                 fragment = ProductCreationFragment.getInstance(catalogId);
                 break;

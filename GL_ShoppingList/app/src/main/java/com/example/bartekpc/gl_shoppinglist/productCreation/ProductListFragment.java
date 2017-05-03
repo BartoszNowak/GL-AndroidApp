@@ -19,6 +19,10 @@ import java.util.List;
 
 public class ProductListFragment extends Fragment
 {
+    private static final int NO_CATALOG = -1;
+    private static final int INVALID_LIST_TYPE = -1;
+    private static final int LIST_TYPE_PREDEFINED = 0;
+    private static final int LIST_TYPE_FAVOURITE = 1;
     private static final String POSITION = "POSITION";
     private ProductCreationListsAdapter adapter;
 
@@ -43,19 +47,19 @@ public class ProductListFragment extends Fragment
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
         final List<Product> list;
-        int listType = -1;
+        int listType = INVALID_LIST_TYPE;
         switch (getArguments().getInt(POSITION))
         {
-            case 0:
+            case LIST_TYPE_PREDEFINED:
             {
-                list = DatabaseController.getAllNonFavouriteProductsFromCatalog(-1);
-                listType = 0;
+                list = DatabaseController.getAllNonFavouriteProductsFromCatalog(NO_CATALOG);
+                listType = LIST_TYPE_PREDEFINED;
                 break;
             }
-            case 1:
+            case LIST_TYPE_FAVOURITE:
             {
-                list = DatabaseController.getAllFavouriteProductsFromCatalog(-1);
-                listType = 1;
+                list = DatabaseController.getAllFavouriteProductsFromCatalog(NO_CATALOG);
+                listType = LIST_TYPE_FAVOURITE;
                 break;
             }
             default:
@@ -64,7 +68,7 @@ public class ProductListFragment extends Fragment
                 break;
             }
         }
-        adapter = new ProductCreationListsAdapter(list, getContext(),listType, (ProductAddActivity)getActivity());
+        adapter = new ProductCreationListsAdapter(list,listType, getContext(), (ProductAddActivity)getActivity());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);

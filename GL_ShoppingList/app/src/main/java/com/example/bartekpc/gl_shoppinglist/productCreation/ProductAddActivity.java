@@ -24,6 +24,8 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
     private static final float PRICE_DEFAULT_VALUE = 0f;
     private static final float AMOUNT_DEFAULT_VALUE = 1f;
     private static final String EXTRA_CATALOG_ID = "EXTRA_CATALOG_ID";
+    private static final int LIST_TYPE_PREDEFINED = 0;
+    private static final int LIST_TYPE_FAVOURITE = 1;
     private long catalogId;
 
     @Override
@@ -52,12 +54,12 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
     {
         switch(type)
         {
-            case 0:
+            case LIST_TYPE_PREDEFINED:
             {
                 onPredefinedProductClick(product);
                 break;
             }
-            case 1:
+            case LIST_TYPE_FAVOURITE:
             {
                 onFavouriteProductClick(product);
                 break;
@@ -102,6 +104,10 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                     finishActivity();
                 }
             }).show();
+        }
+        else
+        {
+            DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.product_already_on_list).show();
         }
     }
 
