@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.example.bartekpc.gl_shoppinglist.DatabaseController;
+import com.example.bartekpc.gl_shoppinglist.DialogFactory;
 import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 
@@ -74,14 +75,14 @@ public class ProductCreationFragment extends Fragment
             @Override
             public void onClick(final View view)
             {
-                if (FormValidator.validate(ProductCreationFragment.this, new IValidationCallback()
+                if(FormValidator.validate(ProductCreationFragment.this, new IValidationCallback()
                 {
                     @Override
                     public void validationComplete(final boolean result, final List<FormValidator.ValidationFail> failedValidations, final List<View> passedValidations)
                     {
-                        if (!failedValidations.isEmpty())
+                        if(!failedValidations.isEmpty())
                         {
-                            for (FormValidator.ValidationFail fail : failedValidations)
+                            for(FormValidator.ValidationFail fail : failedValidations)
                             {
                                 ((TextInputLayout) fail.view.getParent().getParent()).setError(fail.message);
                             }
@@ -89,34 +90,48 @@ public class ProductCreationFragment extends Fragment
                     }
                 }))
                 {
-                    final String productName = editText_productName.getText().toString();
-                    final Float productPrice;
-                    final Float productAmount;
-                    if (TextUtils.isEmpty(editText_productPrice.getText()))
-                    {
-                        productPrice = PRICE_DEFAULT_VALUE;
-                    } else
-                    {
-                        productPrice = Float.parseFloat(editText_productPrice.getText().toString());
-                    }
-                    if (TextUtils.isEmpty(editText_productAmount.getText()))
-                    {
-                        productAmount = AMOUNT_DEFAULT_VALUE;
-                    } else
-                    {
-                        productAmount = Float.parseFloat(editText_productAmount.getText().toString());
-                    }
-                    Product product = new Product(productName, productPrice, productAmount);
-                    product.setFavourite(checkBox_favourite.isChecked());
-                    DatabaseController.addProduct(product, getArguments().getLong(CATALOG_ID));
-                    if (product.isFavourite())
-                    {
-                        product.setAmount(AMOUNT_DEFAULT_VALUE);
-                        DatabaseController.addProduct(product, NO_CATALOG);
-                    }
-                    ((ProductAddActivity) getActivity()).finishActivity();
+                    onValidationSuccess(checkBox_favourite);
                 }
             }
         });
+    }
+
+    private void onValidationSuccess(final CheckBox checkBox_favourite)
+    {
+        final String productName = editText_productName.getText().toString();
+        if(DatabaseController.findProduct(productName, getArguments().getLong(CATALOG_ID)) == null)
+        {
+            final Float productPrice;
+            final Float productAmount;
+            if(TextUtils.isEmpty(editText_productPrice.getText()))
+            {
+                productPrice = PRICE_DEFAULT_VALUE;
+            }
+            else
+            {
+                productPrice = Float.parseFloat(editText_productPrice.getText().toString());
+            }
+            if(TextUtils.isEmpty(editText_productAmount.getText()))
+            {
+                productAmount = AMOUNT_DEFAULT_VALUE;
+            }
+            else
+            {
+                productAmount = Float.parseFloat(editText_productAmount.getText().toString());
+            }
+            Product product = new Product(productName, productPrice, productAmount);
+            product.setFavourite(checkBox_favourite.isChecked());
+            DatabaseController.addProduct(product, getArguments().getLong(CATALOG_ID));
+            if(product.isFavourite())
+            {
+                product.setAmount(AMOUNT_DEFAULT_VALUE);
+                DatabaseController.addProduct(product, NO_CATALOG);
+            }
+            ((ProductAddActivity) getActivity()).finishActivity();
+        }
+        else
+        {
+            DialogFactory.getInformationDialog(getContext(), R.string.cant_add_product, R.string.product_already_on_list).show();
+        }
     }
 }

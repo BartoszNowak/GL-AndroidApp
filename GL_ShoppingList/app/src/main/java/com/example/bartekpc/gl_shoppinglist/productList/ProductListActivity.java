@@ -39,7 +39,6 @@ public class ProductListActivity extends AppCompatActivity
     private ProductListAdapter adapter;
     private int catalogIndex;
     private FloatingActionMenu menu;
-    private List<Product> productList;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState)
@@ -52,7 +51,7 @@ public class ProductListActivity extends AppCompatActivity
         recyclerView.addItemDecoration(itemDecoration);
         Bundle extras = getIntent().getExtras();
         catalogIndex = extras.getInt(EXTRA_CATALOG_NUMBER);
-        productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
+        final List<Product> productList = DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId());
         setTitle(DatabaseController.getCatalog(catalogIndex).getName());
         adapter = new ProductListAdapter(productList, this);
         recyclerView.setAdapter(adapter);
@@ -61,7 +60,7 @@ public class ProductListActivity extends AppCompatActivity
         addProductMenuButtonInit();
         sortMenuButtonInit();
         filterMenuButtonInit();
-        if (DatabaseController.getAllNonFavouriteProductsFromCatalog(NO_CATALOG).size() == 0)
+        if(DatabaseController.getAllNonFavouriteProductsFromCatalog(NO_CATALOG).size() == 0)
         {
             addInitialData();
         }
@@ -96,7 +95,7 @@ public class ProductListActivity extends AppCompatActivity
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
                     {
-                        switch (which)
+                        switch(which)
                         {
                             case SORT_BY_ID:
                             {
@@ -137,7 +136,7 @@ public class ProductListActivity extends AppCompatActivity
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
                     {
-                        switch (which)
+                        switch(which)
                         {
                             case FILTER_ALL:
                             {
@@ -164,16 +163,17 @@ public class ProductListActivity extends AppCompatActivity
     public void onRestart()
     {
         super.onRestart();
-        adapter.swapList(productList);
+        adapter.swapList(DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId()));
     }
 
     void addOrRemoveFromFavourite(final Product product)
     {
-        Product favouriteProduct = DatabaseController.findProduct(product.getName(), NO_CATALOG);
-        if (favouriteProduct != null)
+        Product favouriteProduct = DatabaseController.findProduct(product.getName(), NO_CATALOG, true);
+        if(favouriteProduct != null && favouriteProduct.isFavourite())
         {
             DatabaseController.deleteProduct(favouriteProduct);
-        } else
+        }
+        else
         {
             favouriteProduct = new Product(product.getName(), product.getPrice());
             favouriteProduct.setFavourite(true);
@@ -192,20 +192,19 @@ public class ProductListActivity extends AppCompatActivity
     void removeProduct(final Product product)
     {
         DatabaseController.deleteProduct(product);
-        adapter.swapList(productList);
+        adapter.swapList(DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId()));
+    }
+
+    void setProductPurchased(final Product product, final boolean purchased)
+    {
+        DatabaseController.setProductPurchased(product, purchased);
+        adapter.swapList(DatabaseController.getAllProductsInCatalogFiltered(DatabaseController.getCatalog(catalogIndex).getId()));
     }
 
     private void addInitialData()
     {
-        String[] products = {
-                getString(R.string.milk),
-                getString(R.string.bread),
-                getString(R.string.eggs),
-                getString(R.string.potatoes),
-                getString(R.string.cheese),
-                getString(R.string.butter)
-        };
-        for (String name : products)
+        String[] products = {getString(R.string.milk), getString(R.string.bread), getString(R.string.eggs), getString(R.string.potatoes), getString(R.string.cheese), getString(R.string.butter)};
+        for(String name : products)
         {
             DatabaseController.addProduct(new Product(name), NO_CATALOG);
         }

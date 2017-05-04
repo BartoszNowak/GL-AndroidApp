@@ -8,7 +8,7 @@ public class DecimalFormatUtils
 
     public static String formatCurrency(float number)
     {
-        if (Math.abs(Math.round(number) - number) < EPSILON)
+        if(Math.abs(Math.round(number) - number) < EPSILON)
         {
             return String.format(Locale.getDefault(), "%.0f", number);
         }
@@ -20,7 +20,7 @@ public class DecimalFormatUtils
 
     public static String formatAmount(float number)
     {
-        if (Math.abs(Math.round(number) - number) < EPSILON)
+        if(Math.abs(Math.round(number) - number) < EPSILON)
         {
             return String.format(Locale.getDefault(), "%.0f", number);
         }

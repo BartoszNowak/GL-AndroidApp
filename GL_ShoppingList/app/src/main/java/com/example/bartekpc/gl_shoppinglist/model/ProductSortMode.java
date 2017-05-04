@@ -4,7 +4,8 @@ public enum ProductSortMode
 {
     SORT_DEFAULT("id", 0),
     SORT_BY_NAME("name", 1),
-    SORT_BY_PRICE("price", 2);
+    SORT_BY_PRICE("totalCost", 2);
+    //SORT_BY_PRICE("price", 2);
 
     private final String text;
     private final int index;

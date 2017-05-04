@@ -17,7 +17,9 @@ public class AppSettings extends RealmObject
         this.filterModeIndex = filterMode.getIndex();
     }
 
-    public AppSettings() {}
+    public AppSettings()
+    {
+    }
 
     public void setSortMode(final ProductSortMode sortMode)
     {

@@ -19,11 +19,13 @@ public class Product extends RealmObject
     private boolean isPurchased;
     private boolean isFavourite;
     private long catalogId;
+    private float totalCost;
 
     public Product(final String name)
     {
         this.name = name;
         this.isFavourite = false;
+        totalCost = price * amount;
     }
 
     public Product(final String name, final float price)
@@ -31,6 +33,7 @@ public class Product extends RealmObject
         this.name = name;
         this.price = price;
         amount = AMOUNT_DEFAULT_VALUE;
+        totalCost = price * amount;
     }
 
     public Product(final String name, final float price, final float amount)
@@ -38,6 +41,7 @@ public class Product extends RealmObject
         this.name = name;
         this.price = price;
         this.amount = amount;
+        totalCost = price * amount;
     }
 
     public Product()

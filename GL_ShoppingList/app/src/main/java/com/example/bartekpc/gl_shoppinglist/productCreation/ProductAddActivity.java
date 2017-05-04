@@ -26,6 +26,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
     private static final String EXTRA_CATALOG_ID = "EXTRA_CATALOG_ID";
     private static final int LIST_TYPE_PREDEFINED = 0;
     private static final int LIST_TYPE_FAVOURITE = 1;
+    private static final int MAX_VALUE = 1000;
     private long catalogId;
 
     @Override
@@ -36,7 +37,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
         Bundle extras = getIntent().getExtras();
         catalogId = extras.getLong(EXTRA_CATALOG_ID);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), catalogId));
+        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), catalogId, getApplicationContext()));
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         getSupportActionBar().setElevation(0);
@@ -52,7 +53,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
     @Override
     public void onRecyclerItemClick(final int type, final Product product)
     {
-        switch (type)
+        switch(type)
         {
             case LIST_TYPE_PREDEFINED:
             {
@@ -69,7 +70,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
 
     private void onPredefinedProductClick(final Product product)
     {
-        if (DatabaseController.findProduct(product.getName(), catalogId) == null)
+        if(DatabaseController.findProduct(product.getName(), catalogId) == null)
         {
             final View productDetails = LayoutInflater.from(ProductAddActivity.this).inflate(R.layout.dialog_predefined_product_details, null);
             final EditText editText_productPrice = (EditText) productDetails.findViewById(R.id.editText_productPrice);
@@ -81,28 +82,38 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                 {
                     final float productPrice;
                     final float productAmount;
-                    if (TextUtils.isEmpty(editText_productPrice.getText()))
+                    if(TextUtils.isEmpty(editText_productPrice.getText()))
                     {
                         productPrice = PRICE_DEFAULT_VALUE;
-                    } else
+                    }
+                    else
                     {
                         productPrice = Float.parseFloat(editText_productPrice.getText().toString());
                     }
-                    if (TextUtils.isEmpty(editText_productAmount.getText()))
+                    if(TextUtils.isEmpty(editText_productAmount.getText()))
                     {
                         productAmount = AMOUNT_DEFAULT_VALUE;
-                    } else
+                    }
+                    else
                     {
                         productAmount = Float.parseFloat(editText_productAmount.getText().toString());
                     }
-                    Product newProduct = new Product(product.getName(), productPrice, productAmount);
-                    newProduct.setFavourite(false);
-                    newProduct.setPurchased(false);
-                    DatabaseController.addProduct(newProduct, catalogId);
-                    finishActivity();
+                    if(productAmount < MAX_VALUE && productPrice < MAX_VALUE)
+                    {
+                        Product newProduct = new Product(product.getName(), productPrice, productAmount);
+                        newProduct.setFavourite(false);
+                        newProduct.setPurchased(false);
+                        DatabaseController.addProduct(newProduct, catalogId);
+                        finishActivity();
+                    }
+                    else
+                    {
+                        DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.valid_input_number_values).show();
+                    }
                 }
             }).show();
-        } else
+        }
+        else
         {
             DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.product_already_on_list).show();
         }
@@ -110,7 +121,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
 
     private void onFavouriteProductClick(final Product product)
     {
-        if (DatabaseController.findProduct(product.getName(), catalogId) == null)
+        if(DatabaseController.findProduct(product.getName(), catalogId) == null)
         {
             final View productDetails = LayoutInflater.from(ProductAddActivity.this).inflate(R.layout.dialog_favourite_product_details, null);
             final EditText editText_productAmount = (EditText) productDetails.findViewById(R.id.editText_productAmount);
@@ -120,21 +131,30 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                 public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
                 {
                     final float productAmount;
-                    if (TextUtils.isEmpty(editText_productAmount.getText()))
+                    if(TextUtils.isEmpty(editText_productAmount.getText()))
                     {
                         productAmount = AMOUNT_DEFAULT_VALUE;
-                    } else
+                    }
+                    else
                     {
                         productAmount = Float.parseFloat(editText_productAmount.getText().toString());
                     }
-                    Product newProduct = new Product(product.getName(), product.getPrice(), productAmount);
-                    newProduct.setFavourite(true);
-                    newProduct.setPurchased(false);
-                    DatabaseController.addProduct(newProduct, catalogId);
-                    finishActivity();
+                    if(productAmount < MAX_VALUE)
+                    {
+                        Product newProduct = new Product(product.getName(), product.getPrice(), productAmount);
+                        newProduct.setFavourite(true);
+                        newProduct.setPurchased(false);
+                        DatabaseController.addProduct(newProduct, catalogId);
+                        finishActivity();
+                    }
+                    else
+                    {
+                        DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.valid_input_number_values).show();
+                    }
                 }
             }).show();
-        } else
+        }
+        else
         {
             DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.product_already_on_list).show();
         }

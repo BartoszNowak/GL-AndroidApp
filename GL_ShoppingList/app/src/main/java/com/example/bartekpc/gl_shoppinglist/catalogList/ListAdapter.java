@@ -67,15 +67,18 @@ class ListAdapter extends RecyclerView.Adapter
     {
         final PopupMenu popup = new PopupMenu(context, holder.buttonViewOption);
         popup.inflate(R.menu.catalog_options_menu);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+        {
             @Override
-            public boolean onMenuItemClick(final MenuItem item) {
-                switch (item.getItemId()) {
+            public boolean onMenuItemClick(final MenuItem item)
+            {
+                switch(item.getItemId())
+                {
                     case R.id.menu1:
-                        ((ListsActivity)context).showUpdateListNameDialog(selectedCatalog);
+                        ((ListsActivity) context).showUpdateListNameDialog(selectedCatalog);
                         break;
                     case R.id.menu2:
-                        ((ListsActivity)context).buildDeleteWarningDialog(selectedCatalog);
+                        ((ListsActivity) context).buildDeleteWarningDialog(selectedCatalog);
                         break;
                 }
                 return false;

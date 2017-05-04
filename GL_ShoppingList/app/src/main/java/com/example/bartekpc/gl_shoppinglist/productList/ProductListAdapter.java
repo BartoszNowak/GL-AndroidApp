@@ -61,7 +61,7 @@ class ProductListAdapter extends RecyclerView.Adapter
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
             {
-                DatabaseController.setProductPurchased(selectedProduct, isChecked);
+                ((ProductListActivity) context).setProductPurchased(selectedProduct, isChecked);
                 notifyDataSetChanged();
             }
         });
@@ -85,7 +85,7 @@ class ProductListAdapter extends RecyclerView.Adapter
             @Override
             public boolean onMenuItemClick(MenuItem item)
             {
-                switch (item.getItemId())
+                switch(item.getItemId())
                 {
                     case R.id.menu1:
                     {
@@ -99,7 +99,6 @@ class ProductListAdapter extends RecyclerView.Adapter
                     }
                     case R.id.menu3:
                     {
-                        //TODO: provide possibility to add predefined to favourite
                         DatabaseController.setAllProductsWithNameFavourite(selectedProduct.getName(), !selectedProduct.isFavourite());
                         ((ProductListActivity) context).addOrRemoveFromFavourite(selectedProduct);
                         break;

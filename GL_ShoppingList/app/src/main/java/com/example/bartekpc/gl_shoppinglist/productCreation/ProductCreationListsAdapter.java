@@ -25,13 +25,13 @@ class ProductCreationListsAdapter extends RecyclerView.Adapter
     private final int type;
     private static String costTextResource;
 
-    interface OnRecyclerItemClickListener {
+    interface OnRecyclerItemClickListener
+    {
 
         void onRecyclerItemClick(int dialogType, Product product);
     }
 
-    ProductCreationListsAdapter(final List<Product> list, final int type, final Context context,
-                                       final OnRecyclerItemClickListener onRecyclerItemClickListener)
+    ProductCreationListsAdapter(final List<Product> list, final int type, final Context context, final OnRecyclerItemClickListener onRecyclerItemClickListener)
     {
         swapList(list);
         this.type = type;

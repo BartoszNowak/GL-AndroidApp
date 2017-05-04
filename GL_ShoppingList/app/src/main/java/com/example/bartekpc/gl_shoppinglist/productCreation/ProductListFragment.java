@@ -48,7 +48,7 @@ public class ProductListFragment extends Fragment
         recyclerView.addItemDecoration(itemDecoration);
         final List<Product> list;
         int listType = INVALID_LIST_TYPE;
-        switch (getArguments().getInt(POSITION))
+        switch(getArguments().getInt(POSITION))
         {
             case LIST_TYPE_PREDEFINED:
             {
@@ -68,7 +68,7 @@ public class ProductListFragment extends Fragment
                 break;
             }
         }
-        adapter = new ProductCreationListsAdapter(list,listType, getContext(), (ProductAddActivity)getActivity());
+        adapter = new ProductCreationListsAdapter(list, listType, getContext(), (ProductAddActivity) getActivity());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);

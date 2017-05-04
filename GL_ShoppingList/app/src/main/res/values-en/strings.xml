@@ -55,5 +55,10 @@
     <string name="string_plus_currency" formatted="false">%s$</string>
     <string name="price_info_string" formatted="false">(%s x %s$)</string>
     <string name="valid_input_number_values">Enter value between 0 and 1000</string>
+    <string name="popular">Popular</string>
+    <string name="new_product">New product</string>
+    <string name="edit">Edit</string>
+    <string name="cant_add_catalog">Cannot add list</string>
+    <string name="list_already_exist">List with this name already exist.</string>
 
 </resources>

@@ -55,5 +55,10 @@
     <string name="string_plus_currency" formatted="false">%szł</string>
     <string name="price_info_string" formatted="false">(%s x %szł)</string>
     <string name="valid_input_number_values">Podaj wartość między 0 a 1000</string>
+    <string name="popular">Popularne</string>
+    <string name="new_product">Nowy Produkt</string>
+    <string name="edit">Edytuj</string>
+    <string name="cant_add_catalog">Nie można dodać listy</string>
+    <string name="list_already_exist">Istnieje już lista o takiej nazwie.</string>
 
 </resources>
