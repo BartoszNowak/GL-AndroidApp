@@ -3,17 +3,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp">
 
-    <EditText
-        android:id="@+id/editText_productAmount"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:maxLines="1"
-        android:imeOptions="actionDone"
-        android:hint="@string/amount_hint"
-        android:inputType="numberDecimal"/>
+        app:errorEnabled="true">
+
+        <EditText
+            android:id="@+id/editText_productAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:hint="@string/amount_hint"
+            android:inputType="numberDecimal"/>
+
+    </android.support.design.widget.TextInputLayout>
+
 
 </LinearLayout>

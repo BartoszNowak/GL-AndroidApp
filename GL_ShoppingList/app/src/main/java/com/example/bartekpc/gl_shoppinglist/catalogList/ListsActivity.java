@@ -16,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.bartekpc.gl_shoppinglist.DatabaseController;
 import com.example.bartekpc.gl_shoppinglist.DialogFactory;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
+import com.example.bartekpc.gl_shoppinglist.productCreation.ProductAddActivity;
 import com.example.bartekpc.gl_shoppinglist.productList.ProductListActivity;
 import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Catalog;
@@ -57,7 +58,7 @@ public class ListsActivity extends AppCompatActivity
             public void onClick(final View view)
             {
                 //TODO: sometimes dialog doesn't appear but catalogs are deleted anyway
-                if(DatabaseController.numberOfCatalogs() > 0)
+                if (DatabaseController.numberOfCatalogs() > 0)
                 {
                     final String text = getString(R.string.delete_all_lists_confirmation);
                     DialogFactory.getConfirmationDialog(ListsActivity.this, R.string.delete_all_lists, text, new MaterialDialog.SingleButtonCallback()
@@ -91,12 +92,11 @@ public class ListsActivity extends AppCompatActivity
                     {
                         EditText editText = (EditText) dialog.getCustomView().findViewById(R.id.editText_listName);
                         final String userInput = editText.getText().toString();
-                        if(TextUtils.isEmpty(userInput))
+                        if (TextUtils.isEmpty(userInput))
                         {
                             String catalogName = String.format(getString(R.string.list_plus_int), DatabaseController.getNextCatalogKey() + 1);
                             DatabaseController.addCatalog(catalogName);
-                        }
-                        else
+                        } else
                         {
                             DatabaseController.addCatalog(userInput);
                         }
@@ -127,7 +127,7 @@ public class ListsActivity extends AppCompatActivity
             {
                 EditText editText = (EditText) dialog.getCustomView().findViewById(R.id.editText_listName);
                 final String userInput = editText.getText().toString();
-                if(!TextUtils.isEmpty(userInput))
+                if (!TextUtils.isEmpty(userInput))
                 {
                     DatabaseController.updateCatalogName(catalog, userInput);
                     adapter.swapList(list);
@@ -139,7 +139,7 @@ public class ListsActivity extends AppCompatActivity
     public void buildDeleteWarningDialog(final Catalog catalog)
     {
         int numberOfProducts = DatabaseController.getAllProductsInCatalog(catalog).size();
-        if(numberOfProducts > 0)
+        if (numberOfProducts > 0)
         {
             final String text = String.format(getString(R.string.delete_list_confirmation), catalog.getName());
             DialogFactory.getConfirmationDialog(ListsActivity.this, R.string.delete_list, text, new MaterialDialog.SingleButtonCallback()
@@ -151,8 +151,7 @@ public class ListsActivity extends AppCompatActivity
                     adapter.swapList(list);
                 }
             }).show();
-        }
-        else
+        } else
         {
             DatabaseController.deleteCatalog(catalog);
             adapter.swapList(list);

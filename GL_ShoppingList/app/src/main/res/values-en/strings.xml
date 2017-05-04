@@ -54,4 +54,6 @@
     <string name="list_plus_int" formatted="false">List %d</string>
     <string name="string_plus_currency" formatted="false">%s$</string>
     <string name="price_info_string" formatted="false">(%s x %s$)</string>
+    <string name="valid_input_number_values">Enter value between 0 and 1000</string>
+
 </resources>

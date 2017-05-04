@@ -1,13 +1,12 @@
 package com.example.bartekpc.gl_shoppinglist.productCreation;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -24,14 +23,17 @@ import eu.inmite.android.lib.validations.form.annotations.MinNumberValue;
 import eu.inmite.android.lib.validations.form.annotations.NotEmpty;
 import eu.inmite.android.lib.validations.form.iface.IValidationCallback;
 
-public class ProductCreationFragment extends Fragment
+public class ProductEditActivity extends AppCompatActivity
 {
     private static final int NO_CATALOG = -1;
     private static final String CATALOG_ID = "CATALOG_ID";
     private static final String MIN_VALUE = "0";
     private static final String MAX_VALUE = "1000";
+    private static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
     private static final float PRICE_DEFAULT_VALUE = 0f;
     private static final float AMOUNT_DEFAULT_VALUE = 1f;
+
+    private long productId;
 
     @NotEmpty(messageId = R.string.field_cannot_be_empty)
     private EditText editText_productName;
@@ -44,37 +46,24 @@ public class ProductCreationFragment extends Fragment
     @MaxNumberValue(value = MAX_VALUE, messageId = R.string.valid_input_number_values)
     private EditText editText_productAmount;
 
-    public static Fragment getInstance(final long catalogId)
-    {
-        final Bundle bundle = new Bundle();
-        bundle.putLong(CATALOG_ID, catalogId);
-        final ProductCreationFragment fragment = new ProductCreationFragment();
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable final Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.fragment_product_creation, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable final Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
-        editText_productName = (EditText) getView().findViewById(R.id.editText_productName);
-        editText_productPrice = (EditText) getView().findViewById(R.id.editText_productPrice);
-        editText_productAmount = (EditText) getView().findViewById(R.id.editText_productAmount);
-        final CheckBox checkBox_favourite = (CheckBox) getView().findViewById(R.id.checkBox_favourite);
-        Button button_add = (Button) getView().findViewById(R.id.button_add);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_product_creation);
+        Bundle extras = getIntent().getExtras();
+        productId = extras.getLong(EXTRA_PRODUCT_ID);
+        editText_productName = (EditText) findViewById(R.id.editText_productName);
+        editText_productPrice = (EditText) findViewById(R.id.editText_productPrice);
+        editText_productAmount = (EditText) findViewById(R.id.editText_productAmount);
+        final CheckBox checkBox_favourite = (CheckBox) findViewById(R.id.checkBox_favourite);
+        Button button_add = (Button) findViewById(R.id.button_add);
         button_add.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(final View view)
             {
-                if (FormValidator.validate(ProductCreationFragment.this, new IValidationCallback()
+                if (FormValidator.validate(ProductEditActivity.this, new IValidationCallback()
                 {
                     @Override
                     public void validationComplete(final boolean result, final List<FormValidator.ValidationFail> failedValidations, final List<View> passedValidations)
@@ -108,13 +97,11 @@ public class ProductCreationFragment extends Fragment
                     }
                     Product product = new Product(productName, productPrice, productAmount);
                     product.setFavourite(checkBox_favourite.isChecked());
-                    DatabaseController.addProduct(product, getArguments().getLong(CATALOG_ID));
-                    if (product.isFavourite())
-                    {
-                        product.setAmount(AMOUNT_DEFAULT_VALUE);
-                        DatabaseController.addProduct(product, NO_CATALOG);
-                    }
-                    ((ProductAddActivity) getActivity()).finishActivity();
+                    Product productToUpdate = DatabaseController.findProduct(productId);
+                    DatabaseController.updateProduct(productToUpdate, product);
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
                 }
             }
         });

@@ -80,27 +80,28 @@ class ProductListAdapter extends RecyclerView.Adapter
         final PopupMenu popup = new PopupMenu(context, holder.textView_options);
         popup.inflate(R.menu.product_options_menu);
         popup.getMenu().getItem(FAVOURITE_CHECKBOX_MENU_OPTION).setChecked(selectedProduct.isFavourite());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+        {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
+            public boolean onMenuItemClick(MenuItem item)
+            {
+                switch (item.getItemId())
+                {
                     case R.id.menu1:
                     {
-                        //TODO: add product update option
-                        //((ProductListActivity)context).buildUpdateProductDialog(holder.getAdapterPosition());
+                        ((ProductListActivity) context).startEditProductActivity(selectedProduct.getId());
                         break;
                     }
                     case R.id.menu2:
                     {
-                        DatabaseController.deleteProduct(selectedProduct);
-                        swapList(productList);
+                        ((ProductListActivity) context).removeProduct(selectedProduct);
                         break;
                     }
                     case R.id.menu3:
                     {
                         //TODO: provide possibility to add predefined to favourite
                         DatabaseController.setAllProductsWithNameFavourite(selectedProduct.getName(), !selectedProduct.isFavourite());
-                        ((ProductListActivity)context).addOrRemoveFromFavourite(selectedProduct);
+                        ((ProductListActivity) context).addOrRemoveFromFavourite(selectedProduct);
                         break;
                     }
                 }

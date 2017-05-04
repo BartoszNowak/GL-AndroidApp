@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.bartekpc.gl_shoppinglist.DatabaseController;
 import com.example.bartekpc.gl_shoppinglist.DialogFactory;
 import com.example.bartekpc.gl_shoppinglist.DividerItemDecoration;
+import com.example.bartekpc.gl_shoppinglist.productCreation.ProductEditActivity;
 import com.example.bartekpc.gl_shoppinglist.R;
 import com.example.bartekpc.gl_shoppinglist.model.Product;
 import com.example.bartekpc.gl_shoppinglist.model.ProductFilterMode;
@@ -25,9 +26,15 @@ import java.util.List;
 public class ProductListActivity extends AppCompatActivity
 {
     private static final String EXTRA_CATALOG_NUMBER = "EXTRA_CATALOG_NUMBER";
+    private static final String EXTRA_PRODUCT_ID = "EXTRA_PRODUCT_ID";
     private static final String EXTRA_CATALOG_ID = "EXTRA_CATALOG_ID";
     private static final int NO_CATALOG = -1;
     private static final int REQUEST_CODE = 1;
+    private static final int SORT_BY_ID = 0;
+    private static final int SORT_BY_NAME = 1;
+    private static final int SORT_BY_PRICE = 2;
+    private static final int FILTER_ALL = 0;
+    private static final int FILTER_TO_BUY = 1;
 
     private ProductListAdapter adapter;
     private int catalogIndex;
@@ -38,7 +45,7 @@ public class ProductListActivity extends AppCompatActivity
     protected void onCreate(@Nullable final Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.product_list);
+        setContentView(R.layout.activity_product_list);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView_productList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
@@ -54,7 +61,10 @@ public class ProductListActivity extends AppCompatActivity
         addProductMenuButtonInit();
         sortMenuButtonInit();
         filterMenuButtonInit();
-        if(DatabaseController.getAllNonFavouriteProductsFromCatalog(-1).size() == 0) { addInitialData(); }
+        if (DatabaseController.getAllNonFavouriteProductsFromCatalog(NO_CATALOG).size() == 0)
+        {
+            addInitialData();
+        }
     }
 
     private void addProductMenuButtonInit()
@@ -86,19 +96,19 @@ public class ProductListActivity extends AppCompatActivity
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
                     {
-                        switch(which)
+                        switch (which)
                         {
-                            case 0:
+                            case SORT_BY_ID:
                             {
                                 DatabaseController.setSortMode(ProductSortMode.SORT_DEFAULT);
                                 break;
                             }
-                            case 1:
+                            case SORT_BY_NAME:
                             {
                                 DatabaseController.setSortMode(ProductSortMode.SORT_BY_NAME);
                                 break;
                             }
-                            case 2:
+                            case SORT_BY_PRICE:
                             {
                                 DatabaseController.setSortMode(ProductSortMode.SORT_BY_PRICE);
                                 break;
@@ -127,14 +137,14 @@ public class ProductListActivity extends AppCompatActivity
                     @Override
                     public boolean onSelection(final MaterialDialog dialog, final View itemView, final int which, final CharSequence text)
                     {
-                        switch(which)
+                        switch (which)
                         {
-                            case 0:
+                            case FILTER_ALL:
                             {
                                 DatabaseController.setFilterMode(ProductFilterMode.FILTER_ALL);
                                 break;
                             }
-                            case 1:
+                            case FILTER_TO_BUY:
                             {
                                 DatabaseController.setFilterMode(ProductFilterMode.FILTER_NOT_PURCHASED);
                                 break;
@@ -159,18 +169,30 @@ public class ProductListActivity extends AppCompatActivity
 
     void addOrRemoveFromFavourite(final Product product)
     {
-        Product favouriteProduct = DatabaseController.findProduct(product.getName());
-        if(favouriteProduct != null)
+        Product favouriteProduct = DatabaseController.findProduct(product.getName(), NO_CATALOG);
+        if (favouriteProduct != null)
         {
             DatabaseController.deleteProduct(favouriteProduct);
-        }
-        else
+        } else
         {
             favouriteProduct = new Product(product.getName(), product.getPrice());
             favouriteProduct.setFavourite(true);
             favouriteProduct.setPurchased(false);
             DatabaseController.addProduct(favouriteProduct, NO_CATALOG);
         }
+    }
+
+    void startEditProductActivity(final long productId)
+    {
+        final Intent intent = new Intent(getApplicationContext(), ProductEditActivity.class);
+        intent.putExtra(EXTRA_PRODUCT_ID, productId);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    void removeProduct(final Product product)
+    {
+        DatabaseController.deleteProduct(product);
+        adapter.swapList(productList);
     }
 
     private void addInitialData()
@@ -183,7 +205,7 @@ public class ProductListActivity extends AppCompatActivity
                 getString(R.string.cheese),
                 getString(R.string.butter)
         };
-        for(String name : products)
+        for (String name : products)
         {
             DatabaseController.addProduct(new Product(name), NO_CATALOG);
         }

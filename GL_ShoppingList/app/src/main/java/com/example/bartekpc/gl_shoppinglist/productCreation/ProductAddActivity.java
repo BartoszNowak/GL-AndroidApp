@@ -52,7 +52,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
     @Override
     public void onRecyclerItemClick(final int type, final Product product)
     {
-        switch(type)
+        switch (type)
         {
             case LIST_TYPE_PREDEFINED:
             {
@@ -69,7 +69,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
 
     private void onPredefinedProductClick(final Product product)
     {
-        if(DatabaseController.findProduct(product.getName(), catalogId) == null)
+        if (DatabaseController.findProduct(product.getName(), catalogId) == null)
         {
             final View productDetails = LayoutInflater.from(ProductAddActivity.this).inflate(R.layout.dialog_predefined_product_details, null);
             final EditText editText_productPrice = (EditText) productDetails.findViewById(R.id.editText_productPrice);
@@ -81,19 +81,17 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                 {
                     final float productPrice;
                     final float productAmount;
-                    if(TextUtils.isEmpty(editText_productPrice.getText()))
+                    if (TextUtils.isEmpty(editText_productPrice.getText()))
                     {
                         productPrice = PRICE_DEFAULT_VALUE;
-                    }
-                    else
+                    } else
                     {
                         productPrice = Float.parseFloat(editText_productPrice.getText().toString());
                     }
-                    if(TextUtils.isEmpty(editText_productAmount.getText()))
+                    if (TextUtils.isEmpty(editText_productAmount.getText()))
                     {
                         productAmount = AMOUNT_DEFAULT_VALUE;
-                    }
-                    else
+                    } else
                     {
                         productAmount = Float.parseFloat(editText_productAmount.getText().toString());
                     }
@@ -104,8 +102,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                     finishActivity();
                 }
             }).show();
-        }
-        else
+        } else
         {
             DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.product_already_on_list).show();
         }
@@ -113,7 +110,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
 
     private void onFavouriteProductClick(final Product product)
     {
-        if(DatabaseController.findProduct(product.getName(), catalogId) == null)
+        if (DatabaseController.findProduct(product.getName(), catalogId) == null)
         {
             final View productDetails = LayoutInflater.from(ProductAddActivity.this).inflate(R.layout.dialog_favourite_product_details, null);
             final EditText editText_productAmount = (EditText) productDetails.findViewById(R.id.editText_productAmount);
@@ -123,11 +120,10 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                 public void onClick(@NonNull final MaterialDialog dialog, @NonNull final DialogAction which)
                 {
                     final float productAmount;
-                    if(TextUtils.isEmpty(editText_productAmount.getText()))
+                    if (TextUtils.isEmpty(editText_productAmount.getText()))
                     {
                         productAmount = AMOUNT_DEFAULT_VALUE;
-                    }
-                    else
+                    } else
                     {
                         productAmount = Float.parseFloat(editText_productAmount.getText().toString());
                     }
@@ -138,8 +134,7 @@ public class ProductAddActivity extends AppCompatActivity implements ProductCrea
                     finishActivity();
                 }
             }).show();
-        }
-        else
+        } else
         {
             DialogFactory.getInformationDialog(ProductAddActivity.this, R.string.cant_add_product, R.string.product_already_on_list).show();
         }
